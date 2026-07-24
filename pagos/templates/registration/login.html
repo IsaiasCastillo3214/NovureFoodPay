@@ -1,0 +1,46 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Ingresar - FoodPay</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{% static 'pagos/css/styles.css' %}">
+</head>
+<body>
+
+<main class="login-page">
+    <section class="login-card">
+        <div class="login-header">
+            <h1>FoodPay</h1>
+            <p>Ingresa para gestionar tus ventas</p>
+        </div>
+
+        {% if form.errors %}
+            <div class="product-error">
+                Usuario o contraseña incorrectos.
+            </div>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label>Usuario</label>
+                {{ form.username }}
+            </div>
+
+            <div class="form-group">
+                <label>Contraseña</label>
+                {{ form.password }}
+            </div>
+
+            <button type="submit" class="btn">Ingresar</button>
+        </form>
+    </section>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,64 @@
+{% extends 'pagos/base.html' %}
+
+{% block content %}
+
+<div class="panel-header">
+    <div>
+        <span class="owner-pill">CRUD productos</span>
+        <h2>Productos</h2>
+        <p>Administra los productos disponibles para vender.</p>
+    </div>
+
+    <div class="panel-header-actions">
+        <a href="{% url 'panel_dueno' %}" class="btn btn-secondary">Volver</a>
+        <a href="{% url 'producto_crear' %}" class="btn">+ Crear producto</a>
+    </div>
+</div>
+
+<section class="management-grid">
+    {% for producto in productos %}
+    <article class="management-card">
+
+        <div class="management-card-header">
+            <span class="seller-pill">
+                {% if producto.activo %}
+                    Activo
+                {% else %}
+                    Inactivo
+                {% endif %}
+            </span>
+
+            <strong class="price-text">${{ producto.precio }}</strong>
+        </div>
+
+        <div class="management-card-body">
+            <h3>{{ producto.nombre }}</h3>
+
+            {% if producto.activo %}
+                <p>Este producto está disponible para la venta.</p>
+            {% else %}
+                <p>Este producto no aparece disponible para los vendedores.</p>
+            {% endif %}
+        </div>
+
+        <div class="order-actions">
+            <a href="{% url 'producto_editar' producto.id %}" class="btn btn-edit">
+                Editar
+            </a>
+
+            <a href="{% url 'producto_eliminar' producto.id %}" class="btn btn-delete">
+                Eliminar
+            </a>
+        </div>
+
+    </article>
+    {% empty %}
+    <div class="empty-card">
+        <h2>No hay productos registrados</h2>
+        <p>Crea productos para que los vendedores puedan realizar ventas.</p>
+        <a href="{% url 'producto_crear' %}" class="btn">Crear primer producto</a>
+    </div>
+    {% endfor %}
+</section>
+
+{% endblock %}

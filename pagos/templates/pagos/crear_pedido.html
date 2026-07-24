@@ -1,0 +1,495 @@
+{% extends 'pagos/base.html' %}
+
+{% block content %}
+
+<section class="card card-padding form-card">
+    <h2 class="section-title">{{ titulo }}</h2>
+    <p class="section-subtitle">
+        Completa los datos del cliente y busca los productos en tiempo real.
+    </p>
+
+    {% if producto_error %}
+        <div class="product-error">
+            {{ producto_error }}
+        </div>
+    {% endif %}
+
+    <form method="POST" novalidate>
+        {% csrf_token %}
+
+        {{ form.non_field_errors }}
+
+        {% if es_dueno and form.vendedor %}
+            <div class="form-group">
+                <label>Vendedor</label>
+                {{ form.vendedor }}
+                {{ form.vendedor.errors }}
+            </div>
+        {% endif %}
+
+        <div class="form-group">
+            <label>Nombre del cliente</label>
+            {{ form.nombre_cliente }}
+            {{ form.nombre_cliente.errors }}
+        </div>
+
+        <div class="form-group">
+            <label>Teléfono del cliente</label>
+            {{ form.telefono_cliente }}
+            {{ form.telefono_cliente.errors }}
+        </div>
+
+        <div class="form-group">
+            <label>Tipo de entrega</label>
+            {{ form.tipo_entrega }}
+            {{ form.tipo_entrega.errors }}
+        </div>
+
+        <div class="form-group" id="campo-direccion">
+            <label>Dirección / Detalle de entrega</label>
+            {{ form.detalle_entrega }}
+            {{ form.detalle_entrega.errors }}
+        </div>
+
+        <section class="products-section">
+
+            <div class="products-header">
+                <div>
+                    <h3>Productos del pedido</h3>
+                    <p>
+                        Escribe el producto y selecciónalo desde los resultados.
+                    </p>
+                </div>
+
+                <button type="button" class="btn btn-secondary" id="add-product">
+                    + Agregar producto
+                </button>
+            </div>
+
+            <div id="products-container">
+
+                {% if detalles_existentes %}
+
+                    {% for detalle in detalles_existentes %}
+                        <div class="product-row">
+
+                            <div class="form-group">
+                                <label>Producto</label>
+
+                                <div class="product-ajax-combobox">
+                                    <input
+                                        type="text"
+                                        class="product-search-input"
+                                        placeholder="Ej: Churrasco, completo, bebida..."
+                                        autocomplete="off"
+                                        value="{{ detalle.producto.nombre }} - ${{ detalle.producto.precio }}"
+                                    >
+
+                                    <input
+                                        type="hidden"
+                                        name="producto[]"
+                                        class="product-id-input"
+                                        value="{{ detalle.producto.id }}"
+                                        data-price="{{ detalle.producto.precio }}"
+                                    >
+
+                                    <div class="product-search-results"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Cantidad</label>
+                                <input
+                                    type="number"
+                                    name="cantidad[]"
+                                    class="quantity-input"
+                                    value="{{ detalle.cantidad }}"
+                                    min="1"
+                                >
+                            </div>
+
+                            <div class="line-total">
+                                <span>Subtotal</span>
+                                <strong>$0</strong>
+                            </div>
+
+                            <button type="button" class="remove-product">
+                                Quitar
+                            </button>
+
+                        </div>
+                    {% endfor %}
+
+                {% else %}
+
+                    <div class="product-row">
+
+                        <div class="form-group">
+                            <label>Producto</label>
+
+                            <div class="product-ajax-combobox">
+                                <input
+                                    type="text"
+                                    class="product-search-input"
+                                    placeholder="Ej: Churrasco, completo, bebida..."
+                                    autocomplete="off"
+                                >
+
+                                <input
+                                    type="hidden"
+                                    name="producto[]"
+                                    class="product-id-input"
+                                    data-price="0"
+                                >
+
+                                <div class="product-search-results"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Cantidad</label>
+                            <input
+                                type="number"
+                                name="cantidad[]"
+                                class="quantity-input"
+                                value="1"
+                                min="1"
+                            >
+                        </div>
+
+                        <div class="line-total">
+                            <span>Subtotal</span>
+                            <strong>$0</strong>
+                        </div>
+
+                        <button type="button" class="remove-product">
+                            Quitar
+                        </button>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+            <div class="total-box">
+                <span>Total del pedido</span>
+                <strong id="total-pedido">$0</strong>
+            </div>
+
+        </section>
+
+        <div class="form-group">
+            <label>Tipo de pago</label>
+            {{ form.tipo_pago }}
+            {{ form.tipo_pago.errors }}
+        </div>
+
+        <div class="form-group">
+            <label>Estado del pedido</label>
+            {{ form.estado_pedido }}
+            {{ form.estado_pedido.errors }}
+        </div>
+
+        <div class="form-group">
+            <label>Estado del pago</label>
+            {{ form.estado_pago }}
+            {{ form.estado_pago.errors }}
+        </div>
+
+        <div class="form-group">
+            <label>Observación</label>
+            {{ form.pedido }}
+            {{ form.pedido.errors }}
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn">
+                {{ boton }}
+            </button>
+
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+                Volver
+            </a>
+        </div>
+
+    </form>
+</section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const productsContainer = document.getElementById("products-container");
+        const addProductButton = document.getElementById("add-product");
+        const totalPedido = document.getElementById("total-pedido");
+
+        const tipoEntrega = document.getElementById("id_tipo_entrega");
+        const campoDireccion = document.getElementById("campo-direccion");
+
+        const productSearchUrl = "{% url 'buscar_productos' %}";
+
+        function formatearPrecio(valor) {
+            return "$" + Number(valor || 0).toLocaleString("es-CL");
+        }
+
+        function debounce(callback, delay) {
+            let timeoutId;
+
+            return function (...args) {
+                clearTimeout(timeoutId);
+
+                timeoutId = setTimeout(function () {
+                    callback.apply(null, args);
+                }, delay);
+            };
+        }
+
+        function actualizarFila(row) {
+            const inputProductoId = row.querySelector(".product-id-input");
+            const cantidadInput = row.querySelector(".quantity-input");
+            const subtotalText = row.querySelector(".line-total strong");
+
+            const precio = Number(inputProductoId.dataset.price || 0);
+            const cantidad = parseInt(cantidadInput.value) || 0;
+            const subtotal = precio * cantidad;
+
+            subtotalText.textContent = formatearPrecio(subtotal);
+
+            actualizarTotal();
+        }
+
+        function actualizarTotal() {
+            let total = 0;
+
+            const rows = productsContainer.querySelectorAll(".product-row");
+
+            rows.forEach(function (row) {
+                const inputProductoId = row.querySelector(".product-id-input");
+                const cantidadInput = row.querySelector(".quantity-input");
+
+                const precio = Number(inputProductoId.dataset.price || 0);
+                const cantidad = parseInt(cantidadInput.value) || 0;
+
+                if (inputProductoId.value) {
+                    total += precio * cantidad;
+                }
+            });
+
+            totalPedido.textContent = formatearPrecio(total);
+        }
+
+        function cerrarResultados(row) {
+            const resultsBox = row.querySelector(".product-search-results");
+            resultsBox.classList.remove("is-open");
+            resultsBox.innerHTML = "";
+        }
+
+        function renderizarResultados(row, productos) {
+            const resultsBox = row.querySelector(".product-search-results");
+
+            resultsBox.innerHTML = "";
+
+            if (!productos.length) {
+                resultsBox.innerHTML = `
+                    <div class="product-search-empty">
+                        Sin resultados
+                    </div>
+                `;
+
+                resultsBox.classList.add("is-open");
+                return;
+            }
+
+            productos.forEach(function (producto) {
+                const item = document.createElement("button");
+                item.type = "button";
+                item.className = "product-search-item";
+                item.innerHTML = `
+                    <span>${producto.nombre}</span>
+                    <strong>${formatearPrecio(producto.precio)}</strong>
+                `;
+
+                item.addEventListener("click", function () {
+                    seleccionarProducto(row, producto);
+                });
+
+                resultsBox.appendChild(item);
+            });
+
+            resultsBox.classList.add("is-open");
+        }
+
+        function buscarProductos(row, texto) {
+            const resultsBox = row.querySelector(".product-search-results");
+
+            if (!texto || texto.trim().length < 1) {
+                cerrarResultados(row);
+                return;
+            }
+
+            resultsBox.innerHTML = `
+                <div class="product-search-empty">
+                    Buscando...
+                </div>
+            `;
+
+            resultsBox.classList.add("is-open");
+
+            fetch(productSearchUrl + "?q=" + encodeURIComponent(texto))
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (data) {
+                    renderizarResultados(row, data.productos || []);
+                })
+                .catch(function () {
+                    resultsBox.innerHTML = `
+                        <div class="product-search-empty">
+                            Error al buscar productos
+                        </div>
+                    `;
+                    resultsBox.classList.add("is-open");
+                });
+        }
+
+        function seleccionarProducto(row, producto) {
+            const inputTexto = row.querySelector(".product-search-input");
+            const inputProductoId = row.querySelector(".product-id-input");
+
+            inputTexto.value = producto.nombre + " - " + formatearPrecio(producto.precio);
+            inputProductoId.value = producto.id;
+            inputProductoId.dataset.price = producto.precio;
+
+            cerrarResultados(row);
+            actualizarFila(row);
+        }
+
+        function inicializarFila(row) {
+            const inputTexto = row.querySelector(".product-search-input");
+            const inputProductoId = row.querySelector(".product-id-input");
+            const cantidadInput = row.querySelector(".quantity-input");
+            const removeButton = row.querySelector(".remove-product");
+
+            const buscarProductosDebounced = debounce(function () {
+                buscarProductos(row, inputTexto.value);
+            }, 250);
+
+            inputTexto.addEventListener("input", function () {
+                inputProductoId.value = "";
+                inputProductoId.dataset.price = "0";
+                actualizarFila(row);
+                buscarProductosDebounced();
+            });
+
+            inputTexto.addEventListener("focus", function () {
+                if (inputTexto.value.trim().length > 0 && !inputProductoId.value) {
+                    buscarProductos(row, inputTexto.value);
+                }
+            });
+
+            inputTexto.addEventListener("keydown", function (event) {
+                if (event.key === "Escape") {
+                    cerrarResultados(row);
+                }
+            });
+
+            cantidadInput.addEventListener("input", function () {
+                if (parseInt(cantidadInput.value) < 1) {
+                    cantidadInput.value = 1;
+                }
+
+                actualizarFila(row);
+            });
+
+            removeButton.addEventListener("click", function () {
+                const filas = productsContainer.querySelectorAll(".product-row");
+
+                if (filas.length === 1) {
+                    inputTexto.value = "";
+                    inputProductoId.value = "";
+                    inputProductoId.dataset.price = "0";
+                    cantidadInput.value = 1;
+                    cerrarResultados(row);
+                    actualizarFila(row);
+                    return;
+                }
+
+                row.remove();
+                actualizarTotal();
+            });
+
+            actualizarFila(row);
+        }
+
+        function agregarFilaProducto() {
+            const primeraFila = productsContainer.querySelector(".product-row");
+
+            if (!primeraFila) {
+                return;
+            }
+
+            const nuevaFila = primeraFila.cloneNode(true);
+
+            const inputTexto = nuevaFila.querySelector(".product-search-input");
+            const inputProductoId = nuevaFila.querySelector(".product-id-input");
+            const cantidadInput = nuevaFila.querySelector(".quantity-input");
+            const subtotalText = nuevaFila.querySelector(".line-total strong");
+            const resultsBox = nuevaFila.querySelector(".product-search-results");
+
+            inputTexto.value = "";
+            inputProductoId.value = "";
+            inputProductoId.dataset.price = "0";
+            cantidadInput.value = 1;
+            subtotalText.textContent = "$0";
+            resultsBox.innerHTML = "";
+            resultsBox.classList.remove("is-open");
+
+            productsContainer.appendChild(nuevaFila);
+
+            inicializarFila(nuevaFila);
+            actualizarTotal();
+
+            inputTexto.focus();
+        }
+
+        function controlarDireccion() {
+            if (!tipoEntrega || !campoDireccion) {
+                return;
+            }
+
+            if (tipoEntrega.value === "retiro_tienda") {
+                campoDireccion.style.display = "none";
+            } else {
+                campoDireccion.style.display = "block";
+            }
+        }
+
+        productsContainer.querySelectorAll(".product-row").forEach(function (row) {
+            inicializarFila(row);
+        });
+
+        if (addProductButton) {
+            addProductButton.addEventListener("click", function () {
+                agregarFilaProducto();
+            });
+        }
+
+        if (tipoEntrega) {
+            tipoEntrega.addEventListener("change", controlarDireccion);
+            controlarDireccion();
+        }
+
+        document.addEventListener("click", function (event) {
+            const clickedInsideCombobox = event.target.closest(".product-ajax-combobox");
+
+            if (!clickedInsideCombobox) {
+                productsContainer.querySelectorAll(".product-row").forEach(function (row) {
+                    cerrarResultados(row);
+                });
+            }
+        });
+
+        actualizarTotal();
+    });
+</script>
+
+{% endblock %}

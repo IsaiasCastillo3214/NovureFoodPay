@@ -1,0 +1,285 @@
+{% extends 'pagos/base.html' %}
+
+{% block content %}
+
+<section class="owner-dashboard">
+
+    <div class="owner-hero owner-dashboard-hero">
+        <div>
+            <span class="owner-pill">Panel del dueño</span>
+            <h2>Dashboard general</h2>
+            <p>
+                Visualiza ventas, pedidos, productos más vendidos y rendimiento de vendedores.
+            </p>
+        </div>
+
+        <div class="owner-hero-actions">
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+                Ver pedidos
+            </a>
+
+            <a href="{% url 'crear_pedido' %}" class="btn">
+                + Nuevo pedido
+            </a>
+        </div>
+    </div>
+
+    <form method="GET" class="owner-filter-card">
+        <label>Filtrar métricas por período</label>
+
+        <div class="owner-filter-actions">
+            <select name="rango">
+                <option value="hoy" {% if filtro_fecha == 'hoy' %}selected{% endif %}>
+                    Hoy
+                </option>
+
+                <option value="semana" {% if filtro_fecha == 'semana' %}selected{% endif %}>
+                    Últimos 7 días
+                </option>
+
+                <option value="mes" {% if filtro_fecha == 'mes' %}selected{% endif %}>
+                    Este mes
+                </option>
+
+                <option value="todos" {% if filtro_fecha == 'todos' %}selected{% endif %}>
+                    Todo
+                </option>
+            </select>
+
+            <button type="submit" class="btn">
+                Aplicar filtro
+            </button>
+        </div>
+    </form>
+
+    <section class="owner-kpi-grid">
+
+        <article class="owner-kpi-card kpi-primary">
+            <span>Ventas totales</span>
+            <strong>${{ total_vendido }}</strong>
+            <small>Total vendido en el período</small>
+        </article>
+
+        <article class="owner-kpi-card">
+            <span>Pedidos totales</span>
+            <strong>{{ total_pedidos }}</strong>
+            <small>Cantidad de pedidos registrados</small>
+        </article>
+
+        <article class="owner-kpi-card">
+            <span>Ticket promedio</span>
+            <strong>${{ ticket_promedio }}</strong>
+            <small>Promedio por pedido</small>
+        </article>
+
+        <article class="owner-kpi-card kpi-success">
+            <span>Total pagado</span>
+            <strong>${{ total_pagado }}</strong>
+            <small>{{ pedidos_pagados }} pedido(s) pagado(s)</small>
+        </article>
+
+        <article class="owner-kpi-card kpi-warning">
+            <span>Total pendiente</span>
+            <strong>${{ total_pendiente }}</strong>
+            <small>{{ pedidos_pendientes }} pedido(s) pendiente(s)</small>
+        </article>
+
+        <article class="owner-kpi-card">
+            <span>Delivery / Retiro</span>
+            <strong>{{ pedidos_delivery }} / {{ pedidos_retiro }}</strong>
+            <small>Pedidos por tipo de entrega</small>
+        </article>
+
+    </section>
+
+    <section class="owner-chart-grid">
+
+        <article class="owner-panel-card">
+            <div class="owner-panel-title">
+                <div>
+                    <h3>Productos más vendidos</h3>
+                    <p>Ranking según cantidad vendida.</p>
+                </div>
+
+                <a href="{% url 'productos_lista' %}" class="mini-link">
+                    Ver productos
+                </a>
+            </div>
+
+            <div class="owner-ranking-list">
+                {% for producto in productos_top %}
+                    <div class="owner-ranking-item">
+                        <div>
+                            <strong>{{ forloop.counter }}. {{ producto.producto__nombre }}</strong>
+                            <span>{{ producto.cantidad_vendida }} unidad(es)</span>
+                        </div>
+
+                        <b>${{ producto.total_vendido }}</b>
+                    </div>
+                {% empty %}
+                    <div class="owner-empty-box">
+                        No hay productos vendidos en este período.
+                    </div>
+                {% endfor %}
+            </div>
+        </article>
+
+        <article class="owner-panel-card">
+            <div class="owner-panel-title">
+                <div>
+                    <h3>Ventas por vendedor</h3>
+                    <p>Ranking según total vendido.</p>
+                </div>
+
+                <a href="{% url 'vendedores_lista' %}" class="mini-link">
+                    Ver vendedores
+                </a>
+            </div>
+
+            <div class="owner-ranking-list">
+                {% for vendedor in vendedores_top %}
+                    <div class="owner-ranking-item">
+                        <div>
+                            <strong>{{ forloop.counter }}. {{ vendedor.vendedor__nombre }}</strong>
+                            <span>{{ vendedor.total_pedidos }} pedido(s)</span>
+                        </div>
+
+                        <b>${{ vendedor.total_vendido }}</b>
+                    </div>
+                {% empty %}
+                    <div class="owner-empty-box">
+                        No hay ventas por vendedor en este período.
+                    </div>
+                {% endfor %}
+            </div>
+        </article>
+
+    </section>
+
+    <section class="owner-panel-card">
+        <div class="owner-panel-title">
+            <div>
+                <h3>Últimos pedidos</h3>
+                <p>Resumen rápido de las ventas más recientes.</p>
+            </div>
+
+            <a href="{% url 'dashboard' %}" class="mini-link">
+                Ver todos
+            </a>
+        </div>
+
+        <div class="owner-table-wrapper">
+            <table class="owner-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Cliente</th>
+                        <th>Vendedor</th>
+                        <th>Total</th>
+                        <th>Pago</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for pedido in ultimos_pedidos %}
+                        <tr>
+                            <td>#{{ pedido.numero_pedido }}</td>
+                            <td>{{ pedido.nombre_cliente }}</td>
+                            <td>{{ pedido.vendedor.nombre }}</td>
+                            <td>${{ pedido.monto }}</td>
+                            <td>
+                                {% if pedido.estado_pago == 'pagado' %}
+                                    <span class="badge badge-pagado">
+                                        Pagado
+                                    </span>
+                                {% else %}
+                                    <span class="badge badge-pendiente">
+                                        Pendiente
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td>{{ pedido.fecha|date:"d/m/Y H:i" }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="6">
+                                No hay pedidos registrados en este período.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="owner-module-grid">
+
+        <article class="owner-module-card">
+            <div class="owner-module-icon">🍔</div>
+
+            <div>
+                <h3>Productos</h3>
+                <p>
+                    Administra precios, disponibilidad y productos activos.
+                </p>
+            </div>
+
+            <div class="owner-module-actions">
+                <a href="{% url 'productos_lista' %}" class="btn">
+                    Gestionar productos
+                </a>
+
+                <a href="{% url 'producto_crear' %}" class="btn btn-secondary">
+                    + Crear producto
+                </a>
+            </div>
+        </article>
+
+        <article class="owner-module-card">
+            <div class="owner-module-icon">👥</div>
+
+            <div>
+                <h3>Vendedores</h3>
+                <p>
+                    Crea usuarios vendedores y administra sus accesos.
+                </p>
+            </div>
+
+            <div class="owner-module-actions">
+                <a href="{% url 'vendedores_lista' %}" class="btn">
+                    Gestionar vendedores
+                </a>
+
+                <a href="{% url 'vendedor_crear' %}" class="btn btn-secondary">
+                    + Crear vendedor
+                </a>
+            </div>
+        </article>
+
+        <article class="owner-module-card">
+            <div class="owner-module-icon">📦</div>
+
+            <div>
+                <h3>Pedidos</h3>
+                <p>
+                    Revisa pedidos, estados de pago y entregas.
+                </p>
+            </div>
+
+            <div class="owner-module-actions">
+                <a href="{% url 'dashboard' %}" class="btn">
+                    Ver pedidos
+                </a>
+
+                <a href="{% url 'crear_pedido' %}" class="btn btn-secondary">
+                    + Registrar pedido
+                </a>
+            </div>
+        </article>
+
+    </section>
+
+</section>
+
+{% endblock %}

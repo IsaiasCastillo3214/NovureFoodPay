@@ -1,0 +1,148 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>FoodPay</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="FoodPay">
+
+    <link rel="stylesheet" href="{% static 'pagos/css/styles.css' %}">
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+
+<main class="page-wrapper">
+
+    <header class="brand-header">
+        <h1>FoodPay</h1>
+        <p>Sistema de pagos para comida rápida</p>
+
+        {% if user.is_authenticated %}
+            <div class="user-bar">
+                <div class="user-session">
+                    <span>Sesión</span>
+                    <strong>{{ user.username }}</strong>
+                </div>
+
+                {% if es_dueno %}
+                    <a href="{% url 'panel_dueno' %}" class="mini-link">
+                        Panel dueño
+                    </a>
+                {% endif %}
+
+                <form method="POST" action="{% url 'logout' %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="mini-logout">
+                        Cerrar sesión
+                    </button>
+                </form>
+            </div>
+        {% endif %}
+    </header>
+
+    {% block content %}
+    {% endblock %}
+
+</main>
+
+{% if user.is_authenticated %}
+    <nav class="mobile-bottom-nav">
+
+        <a href="{% url 'dashboard' %}" class="mobile-nav-item">
+            <span>🏠</span>
+            <strong>Inicio</strong>
+        </a>
+
+        <a href="{% url 'crear_pedido' %}" class="mobile-nav-item mobile-nav-main">
+            <span>➕</span>
+            <strong>Pedido</strong>
+        </a>
+
+        {% if es_dueno %}
+            <a href="{% url 'panel_dueno' %}" class="mobile-nav-item">
+                <span>📊</span>
+                <strong>Panel</strong>
+            </a>
+        {% else %}
+            <a href="{% url 'dashboard' %}" class="mobile-nav-item">
+                <span>📦</span>
+                <strong>Pedidos</strong>
+            </a>
+        {% endif %}
+
+    </nav>
+{% endif %}
+
+{% if messages %}
+    <div id="django-messages" hidden>
+        {% for message in messages %}
+            <div
+                class="django-message"
+                data-tags="{{ message.tags }}"
+                data-text="{{ message|escape }}"
+            ></div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const messagesContainer = document.getElementById("django-messages");
+
+        if (!messagesContainer || !window.Swal) {
+            return;
+        }
+
+        const Toast = window.Swal.mixin({
+            toast: true,
+            position: "bottom-end",
+            showConfirmButton: false,
+            timer: 5000,
+            timerProgressBar: true,
+            background: "#ffffff",
+            color: "#0f172a",
+            customClass: {
+                popup: "swal-foodpay-toast"
+            },
+            didOpen: function (toast) {
+                toast.addEventListener("mouseenter", window.Swal.stopTimer);
+                toast.addEventListener("mouseleave", window.Swal.resumeTimer);
+            }
+        });
+
+        const messageElements = messagesContainer.querySelectorAll(".django-message");
+
+        messageElements.forEach(function (messageElement, index) {
+            const tags = messageElement.dataset.tags || "info";
+            const text = messageElement.dataset.text || "";
+
+            let icon = "info";
+
+            if (tags.includes("success")) {
+                icon = "success";
+            } else if (tags.includes("warning")) {
+                icon = "warning";
+            } else if (tags.includes("error")) {
+                icon = "error";
+            }
+
+            setTimeout(function () {
+                Toast.fire({
+                    icon: icon,
+                    title: text
+                });
+            }, index * 250);
+        });
+    });
+</script>
+
+</body>
+</html>

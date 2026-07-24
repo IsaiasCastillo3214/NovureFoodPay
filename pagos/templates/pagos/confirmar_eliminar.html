@@ -1,0 +1,33 @@
+{% extends 'pagos/base.html' %}
+
+{% block content %}
+
+<section class="card card-padding form-card delete-card">
+    <h2 class="section-title">Eliminar pedido</h2>
+
+    <p class="section-subtitle">
+        ¿Seguro que deseas eliminar este pedido?
+    </p>
+
+    <div class="delete-summary">
+        <strong>{{ pedido.nombre_cliente }}</strong>
+        <span>{{ pedido.pedido }}</span>
+        <span>${{ pedido.monto }}</span>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-delete">
+                Sí, eliminar
+            </button>
+
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+                Cancelar
+            </a>
+        </div>
+    </form>
+</section>
+
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'pagos/base.html' %}
+
+{% block content %}
+
+<div class="panel-header">
+    <div>
+        <span class="owner-pill">CRUD vendedores</span>
+        <h2>Vendedores</h2>
+        <p>Administra vendedores y credenciales de acceso.</p>
+    </div>
+
+    <div class="panel-header-actions">
+        <a href="{% url 'panel_dueno' %}" class="btn btn-secondary">Volver</a>
+        <a href="{% url 'vendedor_crear' %}" class="btn">+ Crear vendedor</a>
+    </div>
+</div>
+
+<section class="management-grid">
+    {% for vendedor in vendedores %}
+    <article class="management-card">
+
+        <div class="management-card-header">
+            <span class="seller-pill">
+                {% if vendedor.usuario and vendedor.usuario.is_active %}
+                    Usuario activo
+                {% else %}
+                    Usuario inactivo
+                {% endif %}
+            </span>
+        </div>
+
+        <div class="management-card-body">
+            <h3>{{ vendedor.nombre }}</h3>
+
+            <div class="management-info-box">
+                <span>Teléfono</span>
+                <strong>{{ vendedor.telefono|default:"Sin teléfono" }}</strong>
+            </div>
+
+            <div class="management-info-box">
+                <span>Correo</span>
+                <strong>{{ vendedor.correo|default:"Sin correo" }}</strong>
+            </div>
+
+            <div class="management-info-box">
+                <span>Usuario</span>
+                {% if vendedor.usuario %}
+                    <strong>{{ vendedor.usuario.username }}</strong>
+                {% else %}
+                    <strong>Sin usuario asociado</strong>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="order-actions">
+            <a href="{% url 'vendedor_editar' vendedor.id %}" class="btn btn-edit">
+                Editar
+            </a>
+
+            <a href="{% url 'vendedor_eliminar' vendedor.id %}" class="btn btn-delete">
+                Eliminar
+            </a>
+        </div>
+
+    </article>
+    {% empty %}
+    <div class="empty-card">
+        <h2>No hay vendedores registrados</h2>
+        <p>Crea vendedores para que puedan iniciar sesión y registrar ventas.</p>
+        <a href="{% url 'vendedor_crear' %}" class="btn">Crear primer vendedor</a>
+    </div>
+    {% endfor %}
+</section>
+
+{% endblock %}

@@ -1,0 +1,435 @@
+{% extends 'pagos/base.html' %}
+
+{% block content %}
+
+<section class="summary-grid">
+
+    <div class="summary-card">
+        <span>Total vendido</span>
+        <strong>${{ total_vendido }}</strong>
+    </div>
+
+    <div class="summary-card">
+        <span>Total pagado</span>
+        <strong>${{ total_pagado }}</strong>
+    </div>
+
+    <div class="summary-card">
+        <span>Total pendiente</span>
+        <strong>${{ total_pendiente }}</strong>
+    </div>
+
+</section>
+
+<section class="segment-section">
+
+    <div class="segment-grid">
+
+        <a href="{% url 'dashboard' %}{% if query_todos %}?{{ query_todos }}{% endif %}"
+           class="segment-card {% if filtro_tipo_entrega == 'todos' %}segment-active{% endif %}">
+            <span>Todos los pedidos</span>
+            <strong>{{ cantidad_total }}</strong>
+            <small>Total vendido: ${{ total_vendido }}</small>
+        </a>
+
+        <a href="{% url 'dashboard' %}{% if query_delivery %}?{{ query_delivery }}{% endif %}"
+           class="segment-card {% if filtro_tipo_entrega == 'delivery' %}segment-active{% endif %}">
+            <span>Delivery</span>
+            <strong>{{ cantidad_delivery }}</strong>
+            <small>Total delivery: ${{ total_delivery }}</small>
+        </a>
+
+        <a href="{% url 'dashboard' %}{% if query_retiro %}?{{ query_retiro }}{% endif %}"
+           class="segment-card {% if filtro_tipo_entrega == 'retiro_tienda' %}segment-active{% endif %}">
+            <span>Retiro en tienda</span>
+            <strong>{{ cantidad_retiro }}</strong>
+            <small>Total retiro: ${{ total_retiro }}</small>
+        </a>
+
+    </div>
+
+</section>
+
+<section class="date-filter-card">
+
+    <form method="GET" action="{% url 'dashboard' %}" class="date-filter-form">
+
+        {% if busqueda %}
+            <input type="hidden" name="q" value="{{ busqueda }}">
+        {% endif %}
+
+        {% if filtro_tipo_entrega != 'todos' %}
+            <input type="hidden" name="tipo_entrega" value="{{ filtro_tipo_entrega }}">
+        {% endif %}
+
+        <div class="date-filter-title">
+            <span>Filtro por fecha</span>
+            <strong>Selecciona un período para revisar ventas</strong>
+        </div>
+
+        <div class="date-filter-controls">
+
+            <div class="form-group">
+                <label>Rango</label>
+                <select name="rango_fecha" id="rangoFecha">
+                    <option value="todos" {% if rango_fecha == 'todos' %}selected{% endif %}>
+                        Todo
+                    </option>
+                    <option value="hoy" {% if rango_fecha == 'hoy' %}selected{% endif %}>
+                        Hoy
+                    </option>
+                    <option value="semana" {% if rango_fecha == 'semana' %}selected{% endif %}>
+                        Últimos 7 días
+                    </option>
+                    <option value="mes" {% if rango_fecha == 'mes' %}selected{% endif %}>
+                        Este mes
+                    </option>
+                    <option value="personalizado" {% if rango_fecha == 'personalizado' %}selected{% endif %}>
+                        Personalizado
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Desde</label>
+                <input type="date" name="fecha_inicio" value="{{ fecha_inicio }}">
+            </div>
+
+            <div class="form-group">
+                <label>Hasta</label>
+                <input type="date" name="fecha_fin" value="{{ fecha_fin }}">
+            </div>
+
+            <button type="submit" class="btn date-filter-button">
+                Aplicar
+            </button>
+
+        </div>
+
+        <div class="date-filter-actions">
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+                Limpiar filtros
+            </a>
+
+            <a
+                href="{% url 'exportar_pedidos_excel' %}{% if export_querystring %}?{{ export_querystring }}{% endif %}"
+                class="btn btn-excel"
+            >
+                Exportar Excel
+            </a>
+        </div>
+
+    </form>
+
+</section>
+
+<section class="fp-search-section">
+
+    <form method="GET" action="{% url 'dashboard' %}" class="fp-modern-search" id="fpSearchForm">
+
+        {% if filtro_tipo_entrega != 'todos' %}
+            <input type="hidden" name="tipo_entrega" value="{{ filtro_tipo_entrega }}">
+        {% endif %}
+
+        <input type="hidden" name="rango_fecha" value="{{ rango_fecha }}">
+
+        {% if fecha_inicio %}
+            <input type="hidden" name="fecha_inicio" value="{{ fecha_inicio }}">
+        {% endif %}
+
+        {% if fecha_fin %}
+            <input type="hidden" name="fecha_fin" value="{{ fecha_fin }}">
+        {% endif %}
+
+        <div class="fp-search-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                <path d="M21 21L16.65 16.65M11 19C6.58 19 3 15.42 3 11C3 6.58 6.58 3 11 3C15.42 3 19 6.58 19 11C19 15.42 15.42 19 11 19Z"
+                      stroke="currentColor"
+                      stroke-width="2.4"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"/>
+            </svg>
+        </div>
+
+        <input
+            type="text"
+            name="q"
+            value="{{ busqueda }}"
+            placeholder="Buscar por ID, cliente, teléfono, producto o monto..."
+            class="fp-modern-search-input"
+        >
+
+        {% if busqueda %}
+            <a href="{% url 'dashboard' %}{% if query_sin_page %}?{{ query_sin_page }}{% endif %}"
+               class="fp-modern-clear"
+               title="Limpiar búsqueda">
+                ×
+            </a>
+        {% endif %}
+
+        <button type="submit" class="fp-modern-search-button" id="fpSearchButton">
+            <span class="fp-search-button-text">Buscar</span>
+            <span class="fp-search-spinner"></span>
+        </button>
+
+    </form>
+
+    <a href="{% url 'crear_pedido' %}" class="btn fp-modern-register">
+        + Registrar pedido
+    </a>
+
+</section>
+
+{% if busqueda or rango_fecha != 'todos' or fecha_inicio or fecha_fin %}
+    <div class="fp-search-result">
+        {% if busqueda %}
+            <span>Búsqueda:</span>
+            <strong>“{{ busqueda }}”</strong>
+        {% endif %}
+
+        {% if rango_fecha != 'todos' %}
+            <span>Fecha:</span>
+            <strong>{{ rango_fecha }}</strong>
+        {% endif %}
+
+        <small>{{ cantidad_pedidos_vista }} pedido(s) encontrado(s)</small>
+    </div>
+{% endif %}
+
+<section class="orders-grid">
+
+    {% for pedido in pedidos %}
+
+        <article class="order-card">
+
+            <div class="order-header">
+                <div>
+                    <div class="order-top-line">
+                        <span class="order-id">
+                            Pedido #{{ pedido.numero_pedido }}
+                        </span>
+
+                        <span class="seller-pill">
+                            {{ pedido.vendedor.nombre }}
+                        </span>
+                    </div>
+
+                    <h2>{{ pedido.nombre_cliente }}</h2>
+
+                    {% if pedido.telefono_cliente %}
+                        <a href="tel:{{ pedido.telefono_cliente }}" class="phone-link">
+                            {{ pedido.telefono_cliente }}
+                        </a>
+                    {% else %}
+                        <span class="phone-link">Sin teléfono</span>
+                    {% endif %}
+                </div>
+
+                <strong class="price-text">${{ pedido.monto }}</strong>
+            </div>
+
+            <div class="order-body">
+
+                <div class="info-box">
+                    <span>ID pedido</span>
+                    <strong>#{{ pedido.numero_pedido }}</strong>
+                </div>
+
+                <div class="info-box">
+                    <span>Tipo de entrega</span>
+                    <strong>
+                        {% if pedido.tipo_entrega == 'delivery' %}
+                            Delivery
+                        {% else %}
+                            Retiro en tienda
+                        {% endif %}
+                    </strong>
+                </div>
+
+                <div class="info-box">
+                    <span>Detalle entrega</span>
+                    <strong>{{ pedido.detalle_entrega|default:"Sin detalle" }}</strong>
+                </div>
+
+                <div class="info-box">
+                    <span>Tipo de pago</span>
+                    <strong>{{ pedido.get_tipo_pago_display }}</strong>
+                </div>
+
+                <div class="info-box">
+                    <span>Fecha</span>
+                    <strong>{{ pedido.fecha|date:"d/m/Y H:i" }}</strong>
+                </div>
+
+            </div>
+
+            <div class="pedido-box">
+                <span>Productos</span>
+
+                <ul class="products-list">
+                    {% for detalle in pedido.detalles.all %}
+                        <li>
+                            <strong>{{ detalle.cantidad }} x {{ detalle.producto.nombre }}</strong>
+                            <span>${{ detalle.subtotal }}</span>
+                        </li>
+                    {% empty %}
+                        <li>
+                            <strong>Sin productos registrados</strong>
+                            <span>$0</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                {% if pedido.pedido %}
+                    <div class="order-note">
+                        <span>Observación</span>
+                        <p>{{ pedido.pedido }}</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="status-area">
+                <div>
+                    <span class="status-label">Estado pedido</span>
+                    <span class="badge badge-pedido">
+                        {{ pedido.get_estado_pedido_display }}
+                    </span>
+                </div>
+
+                <div>
+                    <span class="status-label">Estado pago</span>
+
+                    {% if pedido.estado_pago == 'pagado' %}
+                        <span class="badge badge-pagado">
+                            {{ pedido.get_estado_pago_display }}
+                        </span>
+                    {% else %}
+                        <span class="badge badge-pendiente">
+                            {{ pedido.get_estado_pago_display }}
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <form method="POST" action="{% url 'actualizar_estado' pedido.id %}" class="quick-form">
+                {% csrf_token %}
+
+                <div>
+                    <label>Pedido</label>
+                    <select name="estado_pedido">
+                        {% for estado in estados_pedido %}
+                            <option value="{{ estado.0 }}"
+                                {% if pedido.estado_pedido == estado.0 %}selected{% endif %}>
+                                {{ estado.1 }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label>Pago</label>
+                    <select name="estado_pago">
+                        {% for estado in estados_pago %}
+                            <option value="{{ estado.0 }}"
+                                {% if pedido.estado_pago == estado.0 %}selected{% endif %}>
+                                {{ estado.1 }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-small">
+                    Actualizar estado
+                </button>
+            </form>
+
+            <div class="order-actions">
+                <a href="{% url 'editar_pedido' pedido.id %}" class="btn btn-edit">
+                    Editar
+                </a>
+
+                <a href="{% url 'eliminar_pedido' pedido.id %}" class="btn btn-delete">
+                    Eliminar
+                </a>
+            </div>
+
+        </article>
+
+    {% empty %}
+
+        <div class="empty-card">
+            <h2>No hay pedidos para mostrar</h2>
+
+            {% if busqueda %}
+                <p>
+                    No se encontraron pedidos para la búsqueda:
+                    <strong>{{ busqueda }}</strong>.
+                </p>
+            {% elif filtro_tipo_entrega == 'delivery' %}
+                <p>No existen pedidos de delivery registrados.</p>
+            {% elif filtro_tipo_entrega == 'retiro_tienda' %}
+                <p>No existen pedidos de retiro en tienda registrados.</p>
+            {% else %}
+                <p>Registra el primer pedido para comenzar a visualizar ventas.</p>
+            {% endif %}
+
+            <a href="{% url 'crear_pedido' %}" class="btn">
+                Registrar pedido
+            </a>
+        </div>
+
+    {% endfor %}
+
+</section>
+
+{% if page_obj.has_other_pages %}
+    <nav class="pagination-wrapper">
+
+        {% if page_obj.has_previous %}
+            <a
+                class="pagination-btn"
+                href="?page={{ page_obj.previous_page_number }}{% if query_sin_page %}&{{ query_sin_page }}{% endif %}"
+            >
+                ← Anterior
+            </a>
+        {% else %}
+            <span class="pagination-btn pagination-disabled">
+                ← Anterior
+            </span>
+        {% endif %}
+
+        <div class="pagination-info">
+            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+        </div>
+
+        {% if page_obj.has_next %}
+            <a
+                class="pagination-btn"
+                href="?page={{ page_obj.next_page_number }}{% if query_sin_page %}&{{ query_sin_page }}{% endif %}"
+            >
+                Siguiente →
+            </a>
+        {% else %}
+            <span class="pagination-btn pagination-disabled">
+                Siguiente →
+            </span>
+        {% endif %}
+
+    </nav>
+{% endif %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchForm = document.getElementById("fpSearchForm");
+        const searchButton = document.getElementById("fpSearchButton");
+
+        if (searchForm && searchButton) {
+            searchForm.addEventListener("submit", function () {
+                searchButton.classList.add("is-loading");
+                searchButton.disabled = true;
+            });
+        }
+    });
+</script>
+
+{% endblock %}

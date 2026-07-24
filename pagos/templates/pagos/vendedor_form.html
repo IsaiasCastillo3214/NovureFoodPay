@@ -1,0 +1,69 @@
+{% extends 'pagos/base.html' %}
+
+{% block content %}
+
+<section class="card card-padding form-card">
+    <h2 class="section-title">{{ titulo }}</h2>
+    <p class="section-subtitle">
+        Completa los datos del vendedor y sus credenciales de acceso.
+    </p>
+
+    <form method="POST" novalidate>
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label>Nombre del vendedor</label>
+            {{ form.nombre }}
+            {{ form.nombre.errors }}
+        </div>
+
+        <div class="form-group">
+            <label>Teléfono</label>
+            {{ form.telefono }}
+            {{ form.telefono.errors }}
+        </div>
+
+        <div class="form-group">
+            <label>Correo</label>
+            {{ form.correo }}
+            {{ form.correo.errors }}
+        </div>
+
+        <hr class="form-divider">
+
+        <div class="form-group">
+            <label>Usuario de acceso</label>
+            {{ form.username }}
+            {{ form.username.errors }}
+        </div>
+
+        <div class="form-group">
+            <label>
+                Contraseña
+                {% if editando %}
+                    <small>Déjala vacía si no deseas cambiarla.</small>
+                {% endif %}
+            </label>
+            {{ form.password }}
+            {{ form.password.errors }}
+        </div>
+
+        <div class="form-group">
+            <label>Confirmar contraseña</label>
+            {{ form.password_confirm }}
+            {{ form.password_confirm.errors }}
+        </div>
+
+        <div class="form-check">
+            {{ form.usuario_activo }}
+            <label>Usuario activo</label>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn">{{ boton }}</button>
+            <a href="{% url 'vendedores_lista' %}" class="btn btn-secondary">Volver</a>
+        </div>
+    </form>
+</section>
+
+{% endblock %}

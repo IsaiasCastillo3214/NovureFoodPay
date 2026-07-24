@@ -1,0 +1,27 @@
+{% extends 'pagos/base.html' %}
+
+{% block content %}
+
+<section class="card card-padding form-card delete-card">
+    <h2 class="section-title">Eliminar producto</h2>
+
+    <p class="section-subtitle">
+        ¿Seguro que deseas eliminar este producto?
+    </p>
+
+    <div class="delete-summary">
+        <strong>{{ producto.nombre }}</strong>
+        <span>${{ producto.precio }}</span>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-delete">Sí, eliminar</button>
+            <a href="{% url 'productos_lista' %}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</section>
+
+{% endblock %}
