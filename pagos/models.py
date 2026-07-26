@@ -1,8 +1,79 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.text import slugify
+
+
+class Negocio(models.Model):
+    nombre = models.CharField(max_length=150, db_index=True)
+    slug = models.SlugField(max_length=180, unique=True, blank=True)
+    telefono = models.CharField(max_length=20, blank=True, null=True)
+    correo = models.EmailField(blank=True, null=True)
+    direccion = models.CharField(max_length=250, blank=True, null=True)
+    activo = models.BooleanField(default=True, db_index=True)
+    creado_en = models.DateTimeField(auto_now_add=True)
+    actualizado_en = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['nombre']
+        indexes = [
+            models.Index(fields=['nombre']),
+            models.Index(fields=['activo']),
+            models.Index(fields=['slug']),
+        ]
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.nombre)
+            slug = base_slug
+            contador = 1
+
+            while Negocio.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+                contador += 1
+                slug = f'{base_slug}-{contador}'
+
+            self.slug = slug
+
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.nombre
+
+
+class DuenoNegocio(models.Model):
+    usuario = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='perfil_dueno'
+    )
+    negocio = models.ForeignKey(
+        Negocio,
+        on_delete=models.CASCADE,
+        related_name='duenos',
+        db_index=True
+    )
+    activo = models.BooleanField(default=True, db_index=True)
+    creado_en = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['negocio']),
+            models.Index(fields=['activo']),
+        ]
+
+    def __str__(self):
+        return f'{self.usuario.username} - {self.negocio.nombre}'
 
 
 class Vendedor(models.Model):
+    negocio = models.ForeignKey(
+        Negocio,
+        on_delete=models.CASCADE,
+        related_name='vendedores',
+        null=True,
+        blank=True,
+        db_index=True
+    )
+
     usuario = models.OneToOneField(
         User,
         on_delete=models.SET_NULL,
@@ -10,20 +81,35 @@ class Vendedor(models.Model):
         blank=True,
         related_name='perfil_vendedor'
     )
+
     nombre = models.CharField(max_length=100, db_index=True)
     telefono = models.CharField(max_length=20, blank=True, null=True)
     correo = models.EmailField(blank=True, null=True)
 
     class Meta:
         indexes = [
+            models.Index(fields=['negocio']),
             models.Index(fields=['nombre']),
+            models.Index(fields=['negocio', 'nombre']),
         ]
 
     def __str__(self):
+        if self.negocio:
+            return f'{self.nombre} - {self.negocio.nombre}'
+
         return self.nombre
 
 
 class Producto(models.Model):
+    negocio = models.ForeignKey(
+        Negocio,
+        on_delete=models.CASCADE,
+        related_name='productos',
+        null=True,
+        blank=True,
+        db_index=True
+    )
+
     nombre = models.CharField(max_length=120, db_index=True)
     precio = models.PositiveIntegerField()
     activo = models.BooleanField(default=True, db_index=True)
@@ -31,12 +117,18 @@ class Producto(models.Model):
     class Meta:
         ordering = ['nombre']
         indexes = [
+            models.Index(fields=['negocio']),
             models.Index(fields=['nombre']),
             models.Index(fields=['activo']),
+            models.Index(fields=['negocio', 'activo']),
+            models.Index(fields=['negocio', 'nombre']),
             models.Index(fields=['activo', 'nombre']),
         ]
 
     def __str__(self):
+        if self.negocio:
+            return f'{self.nombre} - {self.negocio.nombre} - ${self.precio}'
+
         return f'{self.nombre} - ${self.precio}'
 
 
@@ -66,6 +158,15 @@ class Pedido(models.Model):
         ('pendiente', 'Pendiente'),
         ('pagado', 'Pagado'),
     ]
+
+    negocio = models.ForeignKey(
+        Negocio,
+        on_delete=models.CASCADE,
+        related_name='pedidos',
+        null=True,
+        blank=True,
+        db_index=True
+    )
 
     vendedor = models.ForeignKey(
         Vendedor,
@@ -124,11 +225,15 @@ class Pedido(models.Model):
     class Meta:
         ordering = ['-fecha']
         indexes = [
+            models.Index(fields=['negocio']),
             models.Index(fields=['fecha']),
+            models.Index(fields=['negocio', 'fecha']),
             models.Index(fields=['vendedor', 'fecha']),
             models.Index(fields=['tipo_entrega', 'fecha']),
             models.Index(fields=['estado_pago', 'fecha']),
             models.Index(fields=['estado_pedido', 'fecha']),
+            models.Index(fields=['negocio', 'tipo_entrega', 'fecha']),
+            models.Index(fields=['negocio', 'estado_pago', 'fecha']),
             models.Index(fields=['nombre_cliente']),
             models.Index(fields=['telefono_cliente']),
             models.Index(fields=['monto']),

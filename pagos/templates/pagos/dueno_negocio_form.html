@@ -1,0 +1,71 @@
+{% extends 'pagos/base.html' %}
+
+{% block content %}
+
+<section class="card card-padding form-card">
+    <h2 class="section-title">{{ titulo }}</h2>
+    <p class="section-subtitle">
+        Crea un usuario dueño local y asígnalo a un negocio.
+    </p>
+
+    <form method="POST" novalidate>
+        {% csrf_token %}
+
+        {{ form.non_field_errors }}
+
+        <div class="form-group">
+            <label>Negocio</label>
+            {{ form.negocio }}
+            {{ form.negocio.errors }}
+        </div>
+
+        <div class="form-group">
+            <label>Nombre del dueño</label>
+            {{ form.nombre }}
+            {{ form.nombre.errors }}
+        </div>
+
+        <div class="form-group">
+            <label>Correo</label>
+            {{ form.correo }}
+            {{ form.correo.errors }}
+        </div>
+
+        <div class="form-group">
+            <label>Usuario</label>
+            {{ form.username }}
+            {{ form.username.errors }}
+        </div>
+
+        <div class="form-group">
+            <label>Contraseña</label>
+            {{ form.password }}
+            {{ form.password.errors }}
+        </div>
+
+        <div class="form-group">
+            <label>Confirmar contraseña</label>
+            {{ form.password_confirm }}
+            {{ form.password_confirm.errors }}
+        </div>
+
+        <div class="form-check">
+            {{ form.activo }}
+            <label>Dueño activo</label>
+            {{ form.activo.errors }}
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn">
+                {{ boton }}
+            </button>
+
+            <a href="{% url 'negocios_lista' %}" class="btn btn-secondary">
+                Volver
+            </a>
+        </div>
+
+    </form>
+</section>
+
+{% endblock %}

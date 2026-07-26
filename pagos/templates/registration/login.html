@@ -4,42 +4,92 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Ingresar - FoodPay</title>
+    <title>Iniciar sesión - FoodPay</title>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" href="{% static 'pagos/css/styles.css' %}">
-</head>
-<body>
+    <link rel="stylesheet" href="{% static 'pagos/css/login.css' %}">
 
-<main class="login-page">
-    <section class="login-card">
-        <div class="login-header">
-            <h1>FoodPay</h1>
-            <p>Ingresa para gestionar tus ventas</p>
+    <script src="{% static 'pagos/js/login.js' %}" defer></script>
+</head>
+<body class="foodpay-login-body">
+
+<main class="foodpay-login-page">
+
+    <section class="foodpay-login-card">
+
+        <div class="foodpay-login-header">
+            <h1>Bienvenido de vuelta</h1>
+            <p>Ingresa tus credenciales para acceder a tu cuenta</p>
         </div>
 
-        {% if form.errors %}
-            <div class="product-error">
-                Usuario o contraseña incorrectos.
+        {% if form.non_field_errors %}
+            <div class="foodpay-login-alert">
+                {% for error in form.non_field_errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
             </div>
         {% endif %}
 
-        <form method="POST">
+        <form method="POST" class="foodpay-login-form" novalidate>
             {% csrf_token %}
 
-            <div class="form-group">
-                <label>Usuario</label>
-                {{ form.username }}
+            <div class="foodpay-login-group">
+                <label for="{{ form.username.id_for_label }}">
+                    Usuario
+                </label>
+
+                <div class="foodpay-login-input-wrap">
+                    <span class="foodpay-login-icon">👤</span>
+                    {{ form.username }}
+                </div>
+
+                {% for error in form.username.errors %}
+                    <small class="foodpay-login-error">{{ error }}</small>
+                {% endfor %}
             </div>
 
-            <div class="form-group">
-                <label>Contraseña</label>
-                {{ form.password }}
+            <div class="foodpay-login-group">
+                <label for="{{ form.password.id_for_label }}">
+                    Contraseña
+                </label>
+
+                <div class="foodpay-login-input-wrap foodpay-password-wrap">
+                    <span class="foodpay-login-icon">🔒</span>
+                    {{ form.password }}
+
+                    <button
+                        type="button"
+                        class="foodpay-password-toggle"
+                        id="togglePassword"
+                        aria-label="Mostrar contraseña"
+                    >
+                        👁
+                    </button>
+                </div>
+
+                {% for error in form.password.errors %}
+                    <small class="foodpay-login-error">{{ error }}</small>
+                {% endfor %}
             </div>
 
-            <button type="submit" class="btn">Ingresar</button>
+            <div class="foodpay-login-options">
+                <label class="foodpay-remember">
+                    {{ form.remember_me }}
+                    <span>Recordarme</span>
+                </label>
+            </div>
+
+            <button type="submit" class="foodpay-login-submit" id="loginSubmit">
+                <span class="foodpay-login-submit-icon">↪</span>
+                <span class="foodpay-login-submit-text">Iniciar Sesión</span>
+            </button>
+
         </form>
+
     </section>
+
 </main>
 
 </body>

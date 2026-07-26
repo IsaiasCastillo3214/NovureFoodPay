@@ -5,7 +5,7 @@
 <section class="card card-padding form-card">
     <h2 class="section-title">{{ titulo }}</h2>
     <p class="section-subtitle">
-        Completa los datos del cliente y busca los productos en tiempo real.
+        Selecciona primero el tipo de entrega y luego registra los productos del pedido.
     </p>
 
     {% if producto_error %}
@@ -28,28 +28,32 @@
         {% endif %}
 
         <div class="form-group">
-            <label>Nombre del cliente</label>
-            {{ form.nombre_cliente }}
-            {{ form.nombre_cliente.errors }}
-        </div>
-
-        <div class="form-group">
-            <label>Teléfono del cliente</label>
-            {{ form.telefono_cliente }}
-            {{ form.telefono_cliente.errors }}
-        </div>
-
-        <div class="form-group">
             <label>Tipo de entrega</label>
             {{ form.tipo_entrega }}
             {{ form.tipo_entrega.errors }}
         </div>
 
-        <div class="form-group" id="campo-direccion">
-            <label>Dirección / Detalle de entrega</label>
-            {{ form.detalle_entrega }}
-            {{ form.detalle_entrega.errors }}
-        </div>
+        <section id="datos-cliente-section">
+
+            <div class="form-group">
+                <label>Nombre del cliente</label>
+                {{ form.nombre_cliente }}
+                {{ form.nombre_cliente.errors }}
+            </div>
+
+            <div class="form-group">
+                <label>Teléfono del cliente</label>
+                {{ form.telefono_cliente }}
+                {{ form.telefono_cliente.errors }}
+            </div>
+
+            <div class="form-group" id="campo-direccion">
+                <label>Dirección / Detalle de entrega</label>
+                {{ form.detalle_entrega }}
+                {{ form.detalle_entrega.errors }}
+            </div>
+
+        </section>
 
         <section class="products-section">
 
@@ -223,9 +227,17 @@
         const totalPedido = document.getElementById("total-pedido");
 
         const tipoEntrega = document.getElementById("id_tipo_entrega");
-        const campoDireccion = document.getElementById("campo-direccion");
+        const datosClienteSection = document.getElementById("datos-cliente-section");
+
+        const nombreCliente = document.getElementById("id_nombre_cliente");
+        const telefonoCliente = document.getElementById("id_telefono_cliente");
+        const detalleEntrega = document.getElementById("id_detalle_entrega");
 
         const productSearchUrl = "{% url 'buscar_productos' %}";
+
+        let ultimoNombreCliente = "";
+        let ultimoTelefonoCliente = "";
+        let ultimoDetalleEntrega = "";
 
         function formatearPrecio(valor) {
             return "$" + Number(valor || 0).toLocaleString("es-CL");
@@ -451,15 +463,52 @@
             inputTexto.focus();
         }
 
-        function controlarDireccion() {
-            if (!tipoEntrega || !campoDireccion) {
+        function controlarTipoEntrega() {
+            if (!tipoEntrega || !datosClienteSection) {
                 return;
             }
 
             if (tipoEntrega.value === "retiro_tienda") {
-                campoDireccion.style.display = "none";
+                if (nombreCliente && nombreCliente.value !== "Cliente en local") {
+                    ultimoNombreCliente = nombreCliente.value;
+                }
+
+                if (telefonoCliente && telefonoCliente.value !== "00000000") {
+                    ultimoTelefonoCliente = telefonoCliente.value;
+                }
+
+                if (detalleEntrega && detalleEntrega.value !== "Retiro en tienda") {
+                    ultimoDetalleEntrega = detalleEntrega.value;
+                }
+
+                datosClienteSection.style.display = "none";
+
+                if (nombreCliente) {
+                    nombreCliente.value = "Cliente en local";
+                }
+
+                if (telefonoCliente) {
+                    telefonoCliente.value = "00000000";
+                }
+
+                if (detalleEntrega) {
+                    detalleEntrega.value = "Retiro en tienda";
+                }
+
             } else {
-                campoDireccion.style.display = "block";
+                datosClienteSection.style.display = "block";
+
+                if (nombreCliente && nombreCliente.value === "Cliente en local") {
+                    nombreCliente.value = ultimoNombreCliente;
+                }
+
+                if (telefonoCliente && telefonoCliente.value === "00000000") {
+                    telefonoCliente.value = ultimoTelefonoCliente;
+                }
+
+                if (detalleEntrega && detalleEntrega.value === "Retiro en tienda") {
+                    detalleEntrega.value = ultimoDetalleEntrega;
+                }
             }
         }
 
@@ -474,8 +523,8 @@
         }
 
         if (tipoEntrega) {
-            tipoEntrega.addEventListener("change", controlarDireccion);
-            controlarDireccion();
+            tipoEntrega.addEventListener("change", controlarTipoEntrega);
+            controlarTipoEntrega();
         }
 
         document.addEventListener("click", function (event) {

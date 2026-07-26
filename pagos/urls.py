@@ -15,6 +15,12 @@ urlpatterns = [
 
     path('panel/', views.panel_dueno, name='panel_dueno'),
 
+    path('admin-general/negocios/', views.negocios_lista, name='negocios_lista'),
+    path('admin-general/negocios/crear/', views.negocio_crear, name='negocio_crear'),
+    path('admin-general/negocios/<int:negocio_id>/editar/', views.negocio_editar, name='negocio_editar'),
+    path('admin-general/negocios/<int:negocio_id>/seleccionar/', views.negocio_seleccionar, name='negocio_seleccionar'),
+    path('admin-general/duenos/crear/', views.dueno_negocio_crear, name='dueno_negocio_crear'),
+
     path('panel/productos/', views.productos_lista, name='productos_lista'),
     path('panel/productos/crear/', views.producto_crear, name='producto_crear'),
     path('panel/productos/<int:producto_id>/editar/', views.producto_editar, name='producto_editar'),

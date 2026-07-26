@@ -1,0 +1,103 @@
+{% extends 'pagos/base.html' %}
+
+{% block content %}
+
+<section class="panel-header">
+    <div>
+        <span class="owner-pill">Admin general</span>
+        <h2>Negocios registrados</h2>
+        <p>
+            Crea, edita y selecciona el negocio que deseas administrar.
+        </p>
+    </div>
+
+    <div class="panel-header-actions">
+        <a href="{% url 'negocio_crear' %}" class="btn">
+            + Crear negocio
+        </a>
+
+        <a href="{% url 'dueno_negocio_crear' %}" class="btn btn-secondary">
+            + Crear dueño
+        </a>
+    </div>
+</section>
+
+{% if negocio_activo %}
+    <section class="owner-filter-card">
+        <label>Negocio actualmente seleccionado</label>
+
+        <div class="owner-ranking-item">
+            <div>
+                <strong>{{ negocio_activo.nombre }}</strong>
+                <span>Todo lo que registres se asociará a este negocio.</span>
+            </div>
+
+            <b>Activo</b>
+        </div>
+    </section>
+{% endif %}
+
+<section class="management-grid">
+
+    {% for negocio in negocios %}
+
+        <article class="management-card">
+
+            <div class="management-card-header">
+                <span class="owner-pill">
+                    {% if negocio.activo %}
+                        Activo
+                    {% else %}
+                        Inactivo
+                    {% endif %}
+                </span>
+            </div>
+
+            <div class="management-card-body">
+                <h3>{{ negocio.nombre }}</h3>
+
+                <p>
+                    {{ negocio.direccion|default:"Sin dirección registrada" }}
+                </p>
+
+                <div class="management-info-box">
+                    <span>Teléfono</span>
+                    <strong>{{ negocio.telefono|default:"Sin teléfono" }}</strong>
+                </div>
+
+                <div class="management-info-box">
+                    <span>Correo</span>
+                    <strong>{{ negocio.correo|default:"Sin correo" }}</strong>
+                </div>
+            </div>
+
+            <div class="owner-module-actions">
+                {% if negocio.activo %}
+                    <a href="{% url 'negocio_seleccionar' negocio.id %}" class="btn">
+                        Gestionar este negocio
+                    </a>
+                {% endif %}
+
+                <a href="{% url 'negocio_editar' negocio.id %}" class="btn btn-secondary">
+                    Editar negocio
+                </a>
+            </div>
+
+        </article>
+
+    {% empty %}
+
+        <div class="empty-card">
+            <h2>No hay negocios creados</h2>
+            <p>Crea el primer negocio para comenzar.</p>
+
+            <a href="{% url 'negocio_crear' %}" class="btn">
+                Crear negocio
+            </a>
+        </div>
+
+    {% endfor %}
+
+</section>
+
+{% endblock %}

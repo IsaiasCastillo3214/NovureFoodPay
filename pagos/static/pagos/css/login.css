@@ -1,0 +1,268 @@
+/* ============================================================
+   FOODPAY - LOGIN
+============================================================ */
+
+.foodpay-login-body {
+    min-height: 100vh;
+    margin: 0;
+
+    background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(15, 23, 42, 0.12), transparent 30%),
+        #f4f7fb;
+
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.foodpay-login-page {
+    min-height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 24px;
+}
+
+.foodpay-login-card {
+    width: 100%;
+    max-width: 460px;
+
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 22px;
+    box-shadow: 0 24px 65px rgba(15, 23, 42, 0.14);
+
+    padding: 38px 40px;
+}
+
+.foodpay-login-header {
+    margin-bottom: 28px;
+}
+
+.foodpay-login-header h1 {
+    margin: 0 0 8px;
+
+    color: #020617;
+    font-size: 28px;
+    font-weight: 950;
+    letter-spacing: -0.8px;
+}
+
+.foodpay-login-header p {
+    margin: 0;
+
+    color: #64748b;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.45;
+}
+
+.foodpay-login-alert {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+
+    border-radius: 14px;
+    padding: 13px 14px;
+    margin-bottom: 20px;
+
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.4;
+}
+
+.foodpay-login-alert span {
+    display: block;
+}
+
+.foodpay-login-form {
+    display: grid;
+    gap: 18px;
+}
+
+.foodpay-login-group {
+    display: grid;
+    gap: 9px;
+}
+
+.foodpay-login-group label {
+    color: #0f172a;
+    font-size: 14px;
+    font-weight: 950;
+}
+
+.foodpay-login-input-wrap {
+    height: 52px;
+
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #ffffff;
+
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    align-items: center;
+
+    overflow: hidden;
+    transition: 0.2s ease;
+}
+
+.foodpay-login-input-wrap:focus-within {
+    border-color: #0f172a;
+    box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.08);
+}
+
+.foodpay-login-icon {
+    height: 100%;
+
+    background: #f8fafc;
+    color: #64748b;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 17px;
+}
+
+.foodpay-login-input {
+    width: 100%;
+    height: 100%;
+
+    border: none !important;
+    outline: none !important;
+    background: #ffffff !important;
+    box-shadow: none !important;
+
+    padding: 0 14px !important;
+
+    color: #0f172a;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.foodpay-login-input::placeholder {
+    color: #64748b;
+    font-weight: 600;
+}
+
+.foodpay-password-wrap {
+    grid-template-columns: 44px 1fr 46px;
+}
+
+.foodpay-password-toggle {
+    height: 100%;
+
+    border: none;
+    background: #ffffff;
+    color: #64748b;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.foodpay-password-toggle:hover {
+    color: #0f172a;
+    background: #f8fafc;
+}
+
+.foodpay-login-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.foodpay-remember {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 850;
+
+    cursor: pointer;
+}
+
+.foodpay-remember input {
+    width: 16px;
+    height: 16px;
+
+    accent-color: #0f172a;
+    cursor: pointer;
+}
+
+.foodpay-login-error {
+    display: block;
+
+    color: #b91c1c;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.foodpay-login-submit {
+    width: 100%;
+    min-height: 54px;
+
+    margin-top: 8px;
+
+    border: none;
+    border-radius: 8px;
+    background: #0f172a;
+    color: #ffffff;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    font-size: 16px;
+    font-weight: 950;
+
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.foodpay-login-submit:hover {
+    background: #020617;
+    transform: translateY(-1px);
+    box-shadow: 0 18px 36px rgba(15, 23, 42, 0.18);
+}
+
+.foodpay-login-submit:disabled {
+    opacity: 0.75;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.foodpay-login-submit-icon {
+    font-size: 18px;
+}
+
+.foodpay-login-submit.is-loading .foodpay-login-submit-text {
+    opacity: 0.75;
+}
+
+/* Responsive */
+@media (max-width: 520px) {
+    .foodpay-login-page {
+        padding: 18px;
+    }
+
+    .foodpay-login-card {
+        padding: 30px 22px;
+        border-radius: 20px;
+    }
+
+    .foodpay-login-header h1 {
+        font-size: 25px;
+    }
+
+    .foodpay-login-header p {
+        font-size: 14px;
+    }
+}

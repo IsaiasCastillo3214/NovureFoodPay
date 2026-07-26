@@ -1,0 +1,58 @@
+{% extends 'pagos/base.html' %}
+
+{% block content %}
+
+<section class="card card-padding form-card">
+    <h2 class="section-title">{{ titulo }}</h2>
+    <p class="section-subtitle">
+        Registra los datos generales del negocio.
+    </p>
+
+    <form method="POST" novalidate>
+        {% csrf_token %}
+
+        {{ form.non_field_errors }}
+
+        <div class="form-group">
+            <label>Nombre del negocio</label>
+            {{ form.nombre }}
+            {{ form.nombre.errors }}
+        </div>
+
+        <div class="form-group">
+            <label>Teléfono</label>
+            {{ form.telefono }}
+            {{ form.telefono.errors }}
+        </div>
+
+        <div class="form-group">
+            <label>Correo</label>
+            {{ form.correo }}
+            {{ form.correo.errors }}
+        </div>
+
+        <div class="form-group">
+            <label>Dirección</label>
+            {{ form.direccion }}
+            {{ form.direccion.errors }}
+        </div>
+
+        <div class="form-check">
+            {{ form.activo }}
+            <label>Negocio activo</label>
+            {{ form.activo.errors }}
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn">
+                {{ boton }}
+            </button>
+
+            <a href="{% url 'negocios_lista' %}" class="btn btn-secondary">
+                Volver
+            </a>
+        </div>
+    </form>
+</section>
+
+{% endblock %}

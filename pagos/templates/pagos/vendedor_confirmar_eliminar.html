@@ -2,68 +2,52 @@
 
 {% block content %}
 
-<section class="card card-padding form-card">
-    <h2 class="section-title">{{ titulo }}</h2>
+<section class="card card-padding form-card delete-card">
+
+    <h2 class="section-title">
+        Eliminar vendedor
+    </h2>
+
     <p class="section-subtitle">
-        Completa los datos del vendedor y sus credenciales de acceso.
+        Estás a punto de eliminar este vendedor del sistema. Esta acción quitará su acceso como vendedor.
     </p>
 
-    <form method="POST" novalidate>
+    <div class="delete-summary">
+        <strong>{{ vendedor.nombre }}</strong>
+
+        {% if vendedor.usuario %}
+            <span>Usuario: {{ vendedor.usuario.username }}</span>
+        {% else %}
+            <span>Sin usuario asociado</span>
+        {% endif %}
+
+        {% if vendedor.correo %}
+            <span>Correo: {{ vendedor.correo }}</span>
+        {% else %}
+            <span>Sin correo registrado</span>
+        {% endif %}
+
+        {% if vendedor.telefono %}
+            <span>Teléfono: {{ vendedor.telefono }}</span>
+        {% else %}
+            <span>Sin teléfono registrado</span>
+        {% endif %}
+    </div>
+
+    <form method="POST">
         {% csrf_token %}
 
-        <div class="form-group">
-            <label>Nombre del vendedor</label>
-            {{ form.nombre }}
-            {{ form.nombre.errors }}
-        </div>
-
-        <div class="form-group">
-            <label>Teléfono</label>
-            {{ form.telefono }}
-            {{ form.telefono.errors }}
-        </div>
-
-        <div class="form-group">
-            <label>Correo</label>
-            {{ form.correo }}
-            {{ form.correo.errors }}
-        </div>
-
-        <hr class="form-divider">
-
-        <div class="form-group">
-            <label>Usuario de acceso</label>
-            {{ form.username }}
-            {{ form.username.errors }}
-        </div>
-
-        <div class="form-group">
-            <label>
-                Contraseña
-                {% if editando %}
-                    <small>Déjala vacía si no deseas cambiarla.</small>
-                {% endif %}
-            </label>
-            {{ form.password }}
-            {{ form.password.errors }}
-        </div>
-
-        <div class="form-group">
-            <label>Confirmar contraseña</label>
-            {{ form.password_confirm }}
-            {{ form.password_confirm.errors }}
-        </div>
-
-        <div class="form-check">
-            {{ form.usuario_activo }}
-            <label>Usuario activo</label>
-        </div>
-
         <div class="form-actions">
-            <button type="submit" class="btn">{{ boton }}</button>
-            <a href="{% url 'vendedores_lista' %}" class="btn btn-secondary">Volver</a>
+            <button type="submit" class="btn btn-delete">
+                Sí, eliminar vendedor
+            </button>
+
+            <a href="{% url 'vendedores_lista' %}" class="btn btn-secondary">
+                Cancelar
+            </a>
         </div>
     </form>
+
 </section>
 
 {% endblock %}
