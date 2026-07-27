@@ -1,122 +1,195 @@
 /* ============================================================
-   FOODPAY - BASE JS
-   Menú móvil + mensajes SweetAlert
+   FOODPAY / NOVURE - BASE JS
 ============================================================ */
 
 document.addEventListener("DOMContentLoaded", function () {
-    const openMobileMenu = document.getElementById("fpOpenMobileMenu");
-    const closeMobileMenu = document.getElementById("fpCloseMobileMenu");
+    initMobileNavbar();
+    initDjangoMessages();
+});
+
+/* ============================================================
+   NAVBAR MÓVIL
+============================================================ */
+
+function initMobileNavbar() {
+    const body = document.body;
+
+    const openMenuButton = document.getElementById("fpOpenMobileMenu");
+    const closeMenuButton = document.getElementById("fpCloseMobileMenu");
     const mobileDrawer = document.getElementById("fpMobileDrawer");
     const mobileOverlay = document.getElementById("fpMobileOverlay");
 
-    const toggleMobileUser = document.getElementById("fpToggleMobileUser");
+    const toggleUserButton = document.getElementById("fpToggleMobileUser");
     const mobileDropdown = document.getElementById("fpMobileDropdown");
 
-    function abrirMenu() {
+    function openDrawer() {
         if (!mobileDrawer || !mobileOverlay) {
             return;
         }
 
         mobileDrawer.classList.add("is-open");
         mobileOverlay.classList.add("is-open");
-        document.body.classList.add("fp-mobile-open");
+        body.classList.add("fp-mobile-menu-open");
     }
 
-    function cerrarMenu() {
+    function closeDrawer() {
         if (!mobileDrawer || !mobileOverlay) {
             return;
         }
 
         mobileDrawer.classList.remove("is-open");
         mobileOverlay.classList.remove("is-open");
-        document.body.classList.remove("fp-mobile-open");
+        body.classList.remove("fp-mobile-menu-open");
     }
 
-    if (openMobileMenu) {
-        openMobileMenu.addEventListener("click", abrirMenu);
+    function toggleDropdown() {
+        if (!mobileDropdown) {
+            return;
+        }
+
+        mobileDropdown.classList.toggle("is-open");
     }
 
-    if (closeMobileMenu) {
-        closeMobileMenu.addEventListener("click", cerrarMenu);
+    function closeDropdown() {
+        if (!mobileDropdown) {
+            return;
+        }
+
+        mobileDropdown.classList.remove("is-open");
+    }
+
+    if (openMenuButton) {
+        openMenuButton.addEventListener("click", openDrawer);
+    }
+
+    if (closeMenuButton) {
+        closeMenuButton.addEventListener("click", closeDrawer);
     }
 
     if (mobileOverlay) {
-        mobileOverlay.addEventListener("click", cerrarMenu);
+        mobileOverlay.addEventListener("click", closeDrawer);
     }
 
-    if (toggleMobileUser && mobileDropdown) {
-        toggleMobileUser.addEventListener("click", function (event) {
+    if (toggleUserButton) {
+        toggleUserButton.addEventListener("click", function (event) {
             event.stopPropagation();
-            mobileDropdown.classList.toggle("is-open");
-        });
-
-        mobileDropdown.addEventListener("click", function (event) {
-            event.stopPropagation();
+            toggleDropdown();
         });
     }
 
-    document.addEventListener("click", function () {
-        if (mobileDropdown) {
-            mobileDropdown.classList.remove("is-open");
+    document.addEventListener("click", function (event) {
+        const clickedInsideDropdown = event.target.closest("#fpMobileDropdown");
+        const clickedUserButton = event.target.closest("#fpToggleMobileUser");
+
+        if (!clickedInsideDropdown && !clickedUserButton) {
+            closeDropdown();
         }
     });
 
     document.addEventListener("keydown", function (event) {
         if (event.key === "Escape") {
-            cerrarMenu();
-
-            if (mobileDropdown) {
-                mobileDropdown.classList.remove("is-open");
-            }
+            closeDrawer();
+            closeDropdown();
         }
     });
-});
+}
 
-document.addEventListener("DOMContentLoaded", function () {
+/* ============================================================
+   MENSAJES DJANGO RESPONSIVE
+============================================================ */
+
+function initDjangoMessages() {
     const messagesContainer = document.getElementById("django-messages");
 
-    if (!messagesContainer || !window.Swal) {
+    if (!messagesContainer || typeof Swal === "undefined") {
         return;
     }
 
-    const Toast = window.Swal.mixin({
-        toast: true,
-        position: "bottom-end",
-        showConfirmButton: false,
-        timer: 5000,
-        timerProgressBar: true,
-        background: "#ffffff",
-        color: "#0f172a",
-        customClass: {
-            popup: "swal-foodpay-toast"
-        },
-        didOpen: function (toast) {
-            toast.addEventListener("mouseenter", window.Swal.stopTimer);
-            toast.addEventListener("mouseleave", window.Swal.resumeTimer);
-        }
-    });
+    const messages = messagesContainer.querySelectorAll(".django-message");
 
-    const messageElements = messagesContainer.querySelectorAll(".django-message");
+    if (!messages.length) {
+        return;
+    }
 
-    messageElements.forEach(function (messageElement, index) {
-        const tags = messageElement.dataset.tags || "info";
-        const text = messageElement.dataset.text || "";
-
-        let icon = "info";
-
-        if (tags.includes("success")) {
-            icon = "success";
-        } else if (tags.includes("warning")) {
-            icon = "warning";
-        } else if (tags.includes("error")) {
-            icon = "error";
-        }
+    messages.forEach(function (message, index) {
+        const tags = message.dataset.tags || "info";
+        const text = message.dataset.text || "";
 
         setTimeout(function () {
-            Toast.fire({
-                icon: icon,
-                title: text
-            });
-        }, index * 250);
+            showFoodPayAlert(tags, text);
+        }, index * 350);
     });
-});
+}
+
+function showFoodPayAlert(tags, text) {
+    const alertConfig = getAlertConfig(tags);
+    const isMobile = window.innerWidth <= 600;
+
+    if (isMobile) {
+        Swal.fire({
+            toast: false,
+            icon: alertConfig.icon,
+            title: text,
+
+            position: "top",
+            width: "calc(100vw - 24px)",
+
+            showConfirmButton: false,
+            timer: 4300,
+            timerProgressBar: true,
+
+            backdrop: false,
+            allowOutsideClick: true,
+            allowEscapeKey: true,
+
+            customClass: {
+                popup: "foodpay-mobile-alert-popup",
+                title: "foodpay-mobile-alert-title",
+            },
+        });
+
+        return;
+    }
+
+    Swal.fire({
+        toast: true,
+        icon: alertConfig.icon,
+        title: text,
+
+        position: "top-end",
+        width: 390,
+
+        showConfirmButton: false,
+        timer: 4300,
+        timerProgressBar: true,
+
+        customClass: {
+            popup: "foodpay-toast-popup",
+            title: "foodpay-toast-title",
+        },
+    });
+}
+
+function getAlertConfig(tags) {
+    if (tags.includes("success")) {
+        return {
+            icon: "success",
+        };
+    }
+
+    if (tags.includes("error") || tags.includes("danger")) {
+        return {
+            icon: "error",
+        };
+    }
+
+    if (tags.includes("warning")) {
+        return {
+            icon: "warning",
+        };
+    }
+
+    return {
+        icon: "info",
+    };
+}

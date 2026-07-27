@@ -8,6 +8,7 @@ def rol_usuario(request):
     es_dueno_local = False
     es_dueno = False
     negocio_activo = None
+    modo_ayuda_activo = False
 
     if user.is_authenticated:
         es_admin_general = (
@@ -27,6 +28,10 @@ def rol_usuario(request):
                     id=negocio_id,
                     activo=True
                 ).first()
+
+            modo_ayuda_activo = bool(
+                request.session.get('modo_ayuda_activo') and negocio_activo
+            )
 
         else:
             try:
@@ -53,4 +58,5 @@ def rol_usuario(request):
         'es_dueno_local': es_dueno_local,
         'es_dueno': es_dueno,
         'negocio_activo': negocio_activo,
+        'modo_ayuda_activo': modo_ayuda_activo,
     }

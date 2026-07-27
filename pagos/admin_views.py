@@ -1,20 +1,15 @@
 from django.contrib import messages
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
 
 from .forms import (
     NegocioForm,
     DuenoNegocioUsuarioForm,
 )
+
 from .models import Negocio
-from .permissions import (
-    admin_general_required,
-    obtener_negocio_activo,
-)
+from .permissions import admin_general_required
 
-
-# ============================================================
-# ADMIN GENERAL - NEGOCIOS
-# ============================================================
 
 @admin_general_required
 def negocios_lista(request):
@@ -22,7 +17,6 @@ def negocios_lista(request):
 
     context = {
         'negocios': negocios,
-        'negocio_activo': obtener_negocio_activo(request),
     }
 
     return render(request, 'pagos/negocios_lista.html', context)
@@ -35,10 +29,12 @@ def negocio_crear(request):
 
         if form.is_valid():
             negocio = form.save()
+
             messages.success(
                 request,
-                f'Negocio "{negocio.nombre}" creado correctamente.'
+                f'Negocio {negocio.nombre} creado correctamente.'
             )
+
             return redirect('negocios_lista')
 
     else:
@@ -47,7 +43,7 @@ def negocio_crear(request):
     context = {
         'form': form,
         'titulo': 'Crear negocio',
-        'boton': 'Guardar negocio',
+        'boton': 'Crear negocio',
     }
 
     return render(request, 'pagos/negocio_form.html', context)
@@ -62,10 +58,12 @@ def negocio_editar(request, negocio_id):
 
         if form.is_valid():
             negocio = form.save()
+
             messages.success(
                 request,
-                f'Negocio "{negocio.nombre}" actualizado correctamente.'
+                f'Negocio {negocio.nombre} actualizado correctamente.'
             )
+
             return redirect('negocios_lista')
 
     else:
@@ -74,7 +72,8 @@ def negocio_editar(request, negocio_id):
     context = {
         'form': form,
         'titulo': 'Editar negocio',
-        'boton': 'Actualizar negocio',
+        'boton': 'Guardar cambios',
+        'negocio': negocio,
     }
 
     return render(request, 'pagos/negocio_form.html', context)
@@ -89,13 +88,66 @@ def negocio_seleccionar(request, negocio_id):
     )
 
     request.session['negocio_activo_id'] = negocio.id
+    request.session.pop('modo_ayuda_activo', None)
+    request.session.modified = True
 
     messages.success(
         request,
-        f'Ahora estás gestionando el negocio: {negocio.nombre}.'
+        f'Estás gestionando el negocio {negocio.nombre}.'
     )
 
-    return redirect('panel_dueno')
+    return redirect('dashboard')
+
+
+@admin_general_required
+@require_POST
+def negocio_modo_ayuda(request, negocio_id):
+    negocio = get_object_or_404(
+        Negocio,
+        id=negocio_id,
+        activo=True
+    )
+
+    request.session['negocio_activo_id'] = negocio.id
+    request.session['modo_ayuda_activo'] = True
+    request.session.modified = True
+
+    messages.success(
+        request,
+        f'Entraste en Modo Ayuda para el negocio {negocio.nombre}.'
+    )
+
+    return redirect('dashboard')
+
+
+@admin_general_required
+@require_POST
+def salir_modo_ayuda(request):
+    request.session.pop('modo_ayuda_activo', None)
+    request.session.pop('negocio_activo_id', None)
+    request.session.modified = True
+
+    messages.info(
+        request,
+        'Saliste del Modo Ayuda.'
+    )
+
+    return redirect('negocios_lista')
+
+
+@admin_general_required
+@require_POST
+def salir_negocio_activo(request):
+    request.session.pop('modo_ayuda_activo', None)
+    request.session.pop('negocio_activo_id', None)
+    request.session.modified = True
+
+    messages.info(
+        request,
+        'Saliste del negocio activo.'
+    )
+
+    return redirect('negocios_lista')
 
 
 @admin_general_required
@@ -105,10 +157,12 @@ def dueno_negocio_crear(request):
 
         if form.is_valid():
             dueno_negocio = form.save()
+
             messages.success(
                 request,
-                f'Dueño creado para el negocio {dueno_negocio.negocio.nombre}.'
+                f'Dueño local creado correctamente para {dueno_negocio.negocio.nombre}.'
             )
+
             return redirect('negocios_lista')
 
     else:
@@ -116,8 +170,8 @@ def dueno_negocio_crear(request):
 
     context = {
         'form': form,
-        'titulo': 'Crear dueño de negocio',
-        'boton': 'Guardar dueño',
+        'titulo': 'Crear dueño local',
+        'boton': 'Crear dueño',
     }
 
     return render(request, 'pagos/dueno_negocio_form.html', context)

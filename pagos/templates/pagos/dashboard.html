@@ -1,4 +1,5 @@
 {% extends 'pagos/base.html' %}
+{% load static %}
 
 {% block content %}
 
@@ -418,18 +419,8 @@
     </nav>
 {% endif %}
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const searchForm = document.getElementById("fpSearchForm");
-        const searchButton = document.getElementById("fpSearchButton");
+{% endblock %}
 
-        if (searchForm && searchButton) {
-            searchForm.addEventListener("submit", function () {
-                searchButton.classList.add("is-loading");
-                searchButton.disabled = true;
-            });
-        }
-    });
-</script>
-
+{% block extra_js %}
+    <script src="{% static 'pagos/js/dashboard.js' %}" defer></script>
 {% endblock %}

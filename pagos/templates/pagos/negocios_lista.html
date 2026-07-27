@@ -5,9 +5,11 @@
 <section class="panel-header">
     <div>
         <span class="owner-pill">Admin general</span>
+
         <h2>Negocios registrados</h2>
+
         <p>
-            Crea, edita y selecciona el negocio que deseas administrar.
+            Crea, edita, selecciona negocios o entra en Modo Ayuda para apoyar a un cliente.
         </p>
     </div>
 
@@ -24,15 +26,35 @@
 
 {% if negocio_activo %}
     <section class="owner-filter-card">
-        <label>Negocio actualmente seleccionado</label>
+        <label>
+            {% if modo_ayuda_activo %}
+                Modo Ayuda activo
+            {% else %}
+                Negocio actualmente seleccionado
+            {% endif %}
+        </label>
 
         <div class="owner-ranking-item">
             <div>
                 <strong>{{ negocio_activo.nombre }}</strong>
-                <span>Todo lo que registres se asociará a este negocio.</span>
+
+                {% if modo_ayuda_activo %}
+                    <span>Estás apoyando temporalmente a este negocio.</span>
+                {% else %}
+                    <span>Todo lo que registres se asociará a este negocio.</span>
+                {% endif %}
             </div>
 
-            <b>Activo</b>
+            {% if modo_ayuda_activo %}
+                <form method="POST" action="{% url 'salir_modo_ayuda' %}" class="inline-action-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-secondary">
+                        Salir de Modo Ayuda
+                    </button>
+                </form>
+            {% else %}
+                <b>Activo</b>
+            {% endif %}
         </div>
     </section>
 {% endif %}
@@ -72,9 +94,17 @@
             </div>
 
             <div class="owner-module-actions">
+
                 {% if negocio.activo %}
-                    <a href="{% url 'negocio_seleccionar' negocio.id %}" class="btn">
-                        Gestionar este negocio
+                    <form method="POST" action="{% url 'negocio_modo_ayuda' negocio.id %}" class="inline-action-form">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-help-mode">
+                            🛟 Entrar en Modo Ayuda
+                        </button>
+                    </form>
+
+                    <a href="{% url 'negocio_seleccionar' negocio.id %}" class="btn btn-secondary">
+                        Gestionar negocio
                     </a>
                 {% endif %}
 
@@ -89,7 +119,10 @@
 
         <div class="empty-card">
             <h2>No hay negocios creados</h2>
-            <p>Crea el primer negocio para comenzar.</p>
+
+            <p>
+                Crea el primer negocio para comenzar.
+            </p>
 
             <a href="{% url 'negocio_crear' %}" class="btn">
                 Crear negocio

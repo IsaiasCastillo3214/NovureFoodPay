@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.urls import path, include
-from django.contrib.auth import views as auth_views
 
 from pagos.auth_views import FoodPayLoginView
+from pagos.logout_views import foodpay_logout
 
 
 urlpatterns = [
@@ -16,7 +16,7 @@ urlpatterns = [
 
     path(
         'logout/',
-        auth_views.LogoutView.as_view(),
+        foodpay_logout,
         name='logout'
     ),
 

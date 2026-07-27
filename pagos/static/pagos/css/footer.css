@@ -1,0 +1,231 @@
+
+
+html,
+body {
+    min-height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    margin: 0;
+
+    display: flex;
+    flex-direction: column;
+}
+
+
+.page-wrapper {
+    width: 100%;
+
+    flex: 1 0 auto;
+
+    box-sizing: border-box;
+}
+
+/* ============================================================
+   FOOTER
+============================================================ */
+
+.foodpay-footer {
+    width: 100%;
+
+    flex-shrink: 0;
+
+    background: #0f172a;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+    padding: 18px 0;
+
+    box-sizing: border-box;
+}
+
+.foodpay-footer-inner {
+    width: 100%;
+    max-width: 1500px;
+
+    margin: 0 auto;
+    padding: 0 34px;
+
+    display: grid;
+    grid-template-columns: minmax(220px, auto) 1fr minmax(180px, auto);
+    align-items: center;
+    gap: 24px;
+
+    box-sizing: border-box;
+}
+
+/* Marca */
+
+.foodpay-footer-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+
+    min-width: 0;
+}
+
+.foodpay-footer-logo-box {
+    width: 38px;
+    height: 38px;
+
+    border-radius: 12px;
+    background: #ffffff;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+}
+
+.foodpay-footer-logo {
+    width: 28px;
+    height: 28px;
+
+    object-fit: contain;
+    display: block;
+}
+
+.foodpay-footer-brand div {
+    display: grid;
+    gap: 3px;
+
+    min-width: 0;
+}
+
+.foodpay-footer-brand strong {
+    color: #ffffff;
+
+    font-size: 15px;
+    font-weight: 950;
+    line-height: 1;
+}
+
+.foodpay-footer-brand span {
+    color: #94a3b8;
+
+    font-size: 12px;
+    font-weight: 750;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Texto central */
+
+.foodpay-footer-text {
+    margin: 0;
+
+    color: #cbd5e1;
+
+    font-size: 13px;
+    font-weight: 750;
+    line-height: 1.5;
+
+    text-align: center;
+}
+
+/* Lado derecho */
+
+.foodpay-footer-right {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 14px;
+
+    min-width: 0;
+}
+
+.foodpay-footer-right a {
+    color: #e2e8f0;
+
+    text-decoration: none;
+
+    font-size: 13px;
+    font-weight: 850;
+
+    transition: 0.2s ease;
+}
+
+.foodpay-footer-right a:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+.foodpay-footer-right small {
+    color: #94a3b8;
+
+    font-size: 12px;
+    font-weight: 750;
+
+    white-space: nowrap;
+}
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+
+@media (max-width: 900px) {
+    .foodpay-footer {
+        padding: 20px 0;
+    }
+
+    .foodpay-footer-inner {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        gap: 12px;
+
+        padding: 0 22px;
+
+        text-align: center;
+    }
+
+    .foodpay-footer-brand {
+        justify-content: center;
+    }
+
+    .foodpay-footer-text {
+        max-width: 520px;
+        font-size: 12px;
+    }
+
+    .foodpay-footer-right {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .foodpay-footer-right small {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 480px) {
+    .foodpay-footer {
+        padding: 18px 0;
+    }
+
+    .foodpay-footer-inner {
+        padding: 0 16px;
+    }
+
+    .foodpay-footer-logo-box {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+    }
+
+    .foodpay-footer-logo {
+        width: 25px;
+        height: 25px;
+    }
+
+    .foodpay-footer-brand strong {
+        font-size: 14px;
+    }
+
+    .foodpay-footer-brand span {
+        font-size: 11px;
+    }
+}

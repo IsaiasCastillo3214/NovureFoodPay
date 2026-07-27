@@ -12,156 +12,81 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="FoodPay">
 
-    <link rel="stylesheet" href="{% static 'pagos/css/styles.css' %}">
-    <link rel="stylesheet" href="{% static 'pagos/css/mobile_navbar.css' %}">
+    <!-- ICONO DE LA PESTAÑA -->
+    <link rel="icon" type="image/png" href="{% static 'pagos/img/novure_icon_black.png' %}">
+    <link rel="shortcut icon" type="image/png" href="{% static 'pagos/img/novure_icon_black.png' %}">
+    <link rel="apple-touch-icon" href="{% static 'pagos/img/novure_icon_black.png' %}">
 
+    <!-- CSS PRINCIPAL -->
+    <link rel="stylesheet" href="{% static 'pagos/css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'pagos/css/top_navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'pagos/css/mobile_navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'pagos/css/help_mode.css' %}">
+    <link rel="stylesheet" href="{% static 'pagos/css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'pagos/css/alerts.css' %}">
+
+    <!-- JS GLOBAL -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
     <script src="{% static 'pagos/js/base.js' %}" defer></script>
 </head>
+
 <body>
 
 {% if user.is_authenticated %}
-    <!-- NAVBAR SUPERIOR MÓVIL -->
-    <header class="fp-mobile-appbar">
-
-        <button type="button" class="fp-mobile-menu-btn" id="fpOpenMobileMenu">
-            ☰
-        </button>
-
-        <a href="{% url 'dashboard' %}" class="fp-mobile-title">
-            FoodPay
-        </a>
-
-        <button type="button" class="fp-mobile-user-btn" id="fpToggleMobileUser">
-            <span>{{ user.username|first|upper }}</span>
-        </button>
-
-        <div class="fp-mobile-dropdown" id="fpMobileDropdown">
-
-            <div class="fp-mobile-dropdown-user">
-                {% if user.email %}
-                    {{ user.email }}
-                {% else %}
-                    {{ user.username }}
-                {% endif %}
-            </div>
-
-            <a href="{% url 'dashboard' %}">
-                <span>🏠</span>
-                Ver inicio
-            </a>
-
-            {% if es_admin_general %}
-                <a href="{% url 'negocios_lista' %}">
-                    <span>🏢</span>
-                    Negocios
-                </a>
-            {% endif %}
-
-            {% if es_dueno %}
-                <a href="{% url 'panel_dueno' %}">
-                    <span>📊</span>
-                    Panel dueño
-                </a>
-            {% endif %}
-
-            <form method="POST" action="{% url 'logout' %}">
-                {% csrf_token %}
-                <button type="submit">
-                    <span>↪</span>
-                    Cerrar sesión
-                </button>
-            </form>
-
-        </div>
-
-    </header>
-
-    <!-- MENÚ LATERAL MÓVIL -->
-    <div class="fp-mobile-overlay" id="fpMobileOverlay"></div>
-
-    <aside class="fp-mobile-drawer" id="fpMobileDrawer">
-
-        <div class="fp-mobile-drawer-top">
-
-            <button type="button" class="fp-mobile-menu-btn" id="fpCloseMobileMenu">
-                ☰
-            </button>
-
-            <a href="{% url 'dashboard' %}" class="fp-mobile-title">
-                FoodPay
-            </a>
-
-            <button type="button" class="fp-mobile-user-btn">
-                <span>{{ user.username|first|upper }}</span>
-            </button>
-
-        </div>
-
-        <nav class="fp-mobile-drawer-nav">
-
-            <a href="{% url 'dashboard' %}" class="is-active">
-                <span>🏠</span>
-                <strong>Home</strong>
-            </a>
-
-            <div class="fp-mobile-section-title">
-                Pedidos
-            </div>
-
-            <a href="{% url 'crear_pedido' %}">
-                <span>➕</span>
-                <strong>Registrar pedido</strong>
-            </a>
-
-            <a href="{% url 'dashboard' %}">
-                <span>📦</span>
-                <strong>Pedidos</strong>
-            </a>
-
-            {% if es_dueno %}
-                <div class="fp-mobile-section-title">
-                    Gestión
-                </div>
-
-                <a href="{% url 'panel_dueno' %}">
-                    <span>📊</span>
-                    <strong>Panel dueño</strong>
-                </a>
-
-                <a href="{% url 'productos_lista' %}">
-                    <span>🍔</span>
-                    <strong>Productos</strong>
-                </a>
-
-                <a href="{% url 'vendedores_lista' %}">
-                    <span>👥</span>
-                    <strong>Vendedores</strong>
-                </a>
-            {% endif %}
-
-            {% if es_admin_general %}
-                <div class="fp-mobile-section-title">
-                    Admin general
-                </div>
-
-                <a href="{% url 'negocios_lista' %}">
-                    <span>🏢</span>
-                    <strong>Negocios</strong>
-                </a>
-
-                <a href="{% url 'dueno_negocio_crear' %}">
-                    <span>👤</span>
-                    <strong>Crear dueño</strong>
-                </a>
-            {% endif %}
-
-        </nav>
-
-    </aside>
+    {% include 'pagos/partials/navbar.html' %}
 {% endif %}
 
 <main class="page-wrapper">
+
+    {% if modo_ayuda_activo and negocio_activo %}
+        <section class="help-mode-banner">
+
+            <div class="help-mode-info">
+                <span>Modo Ayuda activo</span>
+
+                <strong>
+                    Estás asistiendo al negocio: {{ negocio_activo.nombre }}
+                </strong>
+
+                <p>
+                    Todas las acciones que realices se aplicarán temporalmente a este negocio.
+                </p>
+            </div>
+
+            <form method="POST" action="{% url 'salir_modo_ayuda' %}">
+                {% csrf_token %}
+                <button type="submit" class="help-mode-exit">
+                    Salir de Modo Ayuda
+                </button>
+            </form>
+
+        </section>
+    {% endif %}
+
+    {% if es_admin_general and negocio_activo and not modo_ayuda_activo %}
+        <section class="help-mode-banner normal-business-mode">
+
+            <div class="help-mode-info">
+                <span>Negocio activo</span>
+
+                <strong>
+                    Estás gestionando el negocio: {{ negocio_activo.nombre }}
+                </strong>
+
+                <p>
+                    Todas las acciones que realices se aplicarán a este negocio.
+                </p>
+            </div>
+
+            <form method="POST" action="{% url 'salir_negocio_activo' %}">
+                {% csrf_token %}
+                <button type="submit" class="help-mode-exit">
+                    Salir del negocio
+                </button>
+            </form>
+
+        </section>
+    {% endif %}
 
     <header class="brand-header">
         <h1>FoodPay</h1>
@@ -171,62 +96,47 @@
         {% else %}
             <p>Sistema de pagos para comida rápida</p>
         {% endif %}
-
-        {% if user.is_authenticated %}
-            <div class="user-bar">
-                <div class="user-session">
-                    <span>Sesión</span>
-                    <strong>{{ user.username }}</strong>
-                </div>
-
-                {% if negocio_activo %}
-                    <div class="user-session">
-                        <span>Negocio</span>
-                        <strong>{{ negocio_activo.nombre }}</strong>
-                    </div>
-                {% endif %}
-
-                {% if es_admin_general %}
-                    <a href="{% url 'negocios_lista' %}" class="mini-link">
-                        Negocios
-                    </a>
-                {% endif %}
-
-                {% if es_dueno %}
-                    <a href="{% url 'panel_dueno' %}" class="mini-link">
-                        Panel dueño
-                    </a>
-                {% endif %}
-
-                <form method="POST" action="{% url 'logout' %}" class="logout-form">
-                    {% csrf_token %}
-                    <button type="submit" class="mini-logout">
-                        Cerrar sesión
-                    </button>
-                </form>
-            </div>
-        {% endif %}
     </header>
 
     {% block content %}
     {% endblock %}
 
-    <footer class="foodpay-footer">
-        <div class="foodpay-footer-card foodpay-footer-simple">
+</main>
 
-            <p>
-                <strong>FoodPay</strong> es una aplicación creada para optimizar el registro,
-                control y seguimiento de pedidos, pagos y ventas en negocios de comida rápida.
-            </p>
+<footer class="foodpay-footer" role="contentinfo">
+    <div class="foodpay-footer-inner">
+
+        <div class="foodpay-footer-brand">
+            <span class="foodpay-footer-logo-box">
+                <img
+                    src="{% static 'pagos/img/novure_icon_black.png' %}"
+                    alt="Novure"
+                    class="foodpay-footer-logo"
+                >
+            </span>
+
+            <div>
+                <strong>FoodPay</strong>
+                <span>Novure · Gestión de ventas</span>
+            </div>
+        </div>
+
+        <p class="foodpay-footer-text">
+            Pedidos, pagos, productos y vendedores en una sola plataforma.
+        </p>
+
+        <div class="foodpay-footer-right">
+            <a href="mailto:contacto@novure.cl">
+                Soporte
+            </a>
 
             <small>
-                © 2026 FoodPay · Novure. Todos los derechos reservados.
+                © 2026 Novure
             </small>
-
         </div>
-    </footer>
 
-</main>
+    </div>
+</footer>
 
 {% if messages %}
     <div id="django-messages" hidden>
@@ -239,6 +149,9 @@
         {% endfor %}
     </div>
 {% endif %}
+
+{% block extra_js %}
+{% endblock %}
 
 </body>
 </html>

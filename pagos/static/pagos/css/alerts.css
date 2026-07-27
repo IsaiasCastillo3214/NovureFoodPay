@@ -1,0 +1,135 @@
+/* ============================================================
+   FOODPAY / NOVURE - ALERTAS RESPONSIVE
+============================================================ */
+
+.swal2-container {
+    z-index: 7000 !important;
+}
+
+/* ============================================================
+   TOAST DESKTOP
+============================================================ */
+
+.foodpay-toast-popup {
+    border-radius: 18px !important;
+    padding: 14px 16px !important;
+
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 18px 48px rgba(15, 23, 42, 0.18) !important;
+
+    overflow: hidden !important;
+}
+
+.foodpay-toast-title {
+    color: #0f172a !important;
+    font-size: 14px !important;
+    font-weight: 950 !important;
+    line-height: 1.35 !important;
+    text-align: left !important;
+}
+
+.foodpay-toast-popup .swal2-icon {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    margin: 0 12px 0 0 !important;
+}
+
+.foodpay-toast-popup .swal2-icon-content {
+    font-size: 22px !important;
+}
+
+.foodpay-toast-popup .swal2-timer-progress-bar {
+    height: 3px !important;
+    background: #0f172a !important;
+}
+
+/* ============================================================
+   ALERTA MÓVIL
+============================================================ */
+
+.foodpay-mobile-alert-popup {
+    width: calc(100vw - 24px) !important;
+    max-width: calc(100vw - 24px) !important;
+
+    margin: 12px auto 0 !important;
+    padding: 16px 18px !important;
+
+    border-radius: 18px !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 18px 48px rgba(15, 23, 42, 0.22) !important;
+
+    box-sizing: border-box !important;
+}
+
+.foodpay-mobile-alert-title {
+    margin: 0 !important;
+    padding: 0 !important;
+
+    color: #0f172a !important;
+    font-size: 14px !important;
+    font-weight: 950 !important;
+    line-height: 1.35 !important;
+    text-align: left !important;
+
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
+}
+
+.foodpay-mobile-alert-popup .swal2-icon {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+
+    margin: 0 12px 0 0 !important;
+}
+
+.foodpay-mobile-alert-popup .swal2-icon-content {
+    font-size: 23px !important;
+}
+
+.foodpay-mobile-alert-popup .swal2-title {
+    padding: 0 !important;
+}
+
+.foodpay-mobile-alert-popup .swal2-html-container {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.foodpay-mobile-alert-popup .swal2-timer-progress-bar {
+    height: 3px !important;
+    background: #0f172a !important;
+}
+
+/* Ajuste especial para layout interno móvil */
+@media (max-width: 600px) {
+    .swal2-container {
+        width: 100% !important;
+        padding: 0 12px !important;
+    }
+
+    .swal2-container.swal2-top {
+        align-items: center !important;
+        justify-content: flex-start !important;
+    }
+
+    .foodpay-mobile-alert-popup {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        gap: 12px !important;
+    }
+
+    .foodpay-mobile-alert-popup .swal2-icon {
+        flex: 0 0 36px !important;
+    }
+
+    .foodpay-mobile-alert-popup .swal2-title {
+        flex: 1 !important;
+        width: auto !important;
+        max-width: 100% !important;
+    }
+}

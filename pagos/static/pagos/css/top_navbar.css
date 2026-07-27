@@ -1,0 +1,412 @@
+/* ============================================================
+   FOODPAY / NOVURE - TOP NAVBAR DESKTOP
+============================================================ */
+
+.fp-top-navbar {
+    width: 100%;
+    height: 72px;
+
+    background: rgba(255, 255, 255, 0.96);
+    border-bottom: 1px solid #e5e7eb;
+    box-shadow: 0 8px 28px rgba(15, 23, 42, 0.04);
+
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    backdrop-filter: blur(14px);
+}
+
+.fp-top-navbar-inner {
+    max-width: 1500px;
+    height: 100%;
+    margin: 0 auto;
+
+    padding: 0 34px;
+
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 32px;
+}
+
+/* MARCA */
+
+.fp-top-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    text-decoration: none;
+    color: #0f172a;
+}
+
+.fp-brand-logo-wrap {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+    background: transparent;
+}
+
+.fp-brand-logo {
+    width: 39px;
+    height: 39px;
+
+    object-fit: contain;
+    display: block;
+}
+
+.fp-brand-text {
+    color: #111827;
+
+    font-size: 25px;
+    font-weight: 950;
+    letter-spacing: -0.9px;
+}
+
+/* MENÚ PRINCIPAL */
+
+.fp-top-menu {
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.fp-top-link {
+    height: 42px;
+
+    padding: 0 13px;
+    border-radius: 12px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    text-decoration: none;
+
+    color: #475569;
+    font-size: 14px;
+    font-weight: 850;
+
+    transition: 0.2s ease;
+}
+
+.fp-top-link span {
+    font-size: 16px;
+}
+
+.fp-top-link:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
+.fp-top-link.is-active {
+    background: #0f172a;
+    color: #ffffff;
+}
+
+.fp-top-link.is-active:hover {
+    background: #020617;
+    color: #ffffff;
+}
+
+/* LADO DERECHO */
+
+.fp-top-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.fp-top-business {
+    min-width: 150px;
+
+    padding: 8px 12px;
+    border-radius: 14px;
+
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+
+    display: grid;
+    gap: 2px;
+}
+
+.fp-top-business-help {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+}
+
+.fp-top-business span {
+    color: #64748b;
+    font-size: 10px;
+    font-weight: 950;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.fp-top-business strong {
+    max-width: 190px;
+
+    color: #0f172a;
+    font-size: 13px;
+    font-weight: 950;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* DROPDOWN USUARIO */
+
+.fp-user-dropdown {
+    position: relative;
+}
+
+.fp-user-dropdown summary {
+    list-style: none;
+
+    min-height: 44px;
+
+    padding: 6px 12px 6px 6px;
+
+    border-radius: 14px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    cursor: pointer;
+    user-select: none;
+
+    transition: 0.2s ease;
+}
+
+.fp-user-dropdown summary::-webkit-details-marker {
+    display: none;
+}
+
+.fp-user-dropdown summary:hover {
+    background: #eef2ff;
+    border-color: #c7d2fe;
+}
+
+.fp-user-avatar {
+    width: 30px;
+    height: 30px;
+
+    border-radius: 999px;
+    background: #0f172a;
+    color: #ffffff;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 12px;
+    font-weight: 950;
+}
+
+.fp-user-name {
+    max-width: 130px;
+
+    color: #0f172a;
+    font-size: 14px;
+    font-weight: 950;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.fp-user-arrow {
+    color: #64748b;
+    font-size: 12px;
+}
+
+.fp-user-dropdown-menu {
+    width: 250px;
+
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.16);
+
+    padding: 8px;
+
+    display: grid;
+    gap: 4px;
+
+    z-index: 2000;
+}
+
+.fp-user-info {
+    padding: 12px;
+
+    border-radius: 14px;
+    background: #f8fafc;
+
+    display: grid;
+    gap: 3px;
+}
+
+.fp-user-info strong {
+    color: #0f172a;
+    font-size: 14px;
+    font-weight: 950;
+}
+
+.fp-user-info span {
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.fp-user-dropdown-menu a,
+.fp-user-dropdown-menu button {
+    width: 100%;
+
+    min-height: 40px;
+
+    border: none;
+    border-radius: 12px;
+    background: transparent;
+
+    padding: 0 10px;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    text-decoration: none;
+    text-align: left;
+
+    color: #334155;
+    font-size: 13px;
+    font-weight: 850;
+
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.fp-user-dropdown-menu a:hover,
+.fp-user-dropdown-menu button:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
+.fp-user-dropdown-menu form {
+    margin: 0;
+}
+
+/* FORM LINKS MÓVIL */
+
+.fp-mobile-form-link {
+    margin: 0;
+}
+
+.fp-mobile-form-link button {
+    width: 100%;
+
+    border: none;
+    background: transparent;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 14px 16px;
+
+    color: #0f172a;
+    text-align: left;
+    font-size: 14px;
+
+    cursor: pointer;
+}
+
+.fp-mobile-form-link button span {
+    width: 24px;
+    text-align: center;
+}
+
+.fp-mobile-form-link button strong {
+    font-size: 14px;
+    font-weight: 950;
+}
+
+.fp-mobile-form-link button:hover {
+    background: #f1f5f9;
+}
+
+/* LOGO MÓVIL */
+
+.fp-mobile-title-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.fp-mobile-logo {
+    width: 28px;
+    height: 28px;
+
+    object-fit: contain;
+    display: block;
+}
+
+/* CONTENIDO */
+
+.page-wrapper {
+    padding-top: 34px;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 1200px) {
+    .fp-top-navbar-inner {
+        padding: 0 22px;
+        gap: 18px;
+    }
+
+    .fp-top-link {
+        padding: 0 10px;
+        font-size: 13px;
+    }
+
+    .fp-brand-text {
+        font-size: 21px;
+    }
+
+    .fp-top-business {
+        display: none;
+    }
+}
+
+@media (max-width: 900px) {
+    .fp-top-link span {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .fp-top-navbar {
+        display: none;
+    }
+
+    .page-wrapper {
+        padding-top: 82px;
+    }
+}

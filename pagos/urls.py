@@ -19,6 +19,25 @@ urlpatterns = [
     path('admin-general/negocios/crear/', views.negocio_crear, name='negocio_crear'),
     path('admin-general/negocios/<int:negocio_id>/editar/', views.negocio_editar, name='negocio_editar'),
     path('admin-general/negocios/<int:negocio_id>/seleccionar/', views.negocio_seleccionar, name='negocio_seleccionar'),
+
+    path(
+        'admin-general/negocios/<int:negocio_id>/modo-ayuda/',
+        views.negocio_modo_ayuda,
+        name='negocio_modo_ayuda'
+    ),
+
+    path(
+        'admin-general/salir-modo-ayuda/',
+        views.salir_modo_ayuda,
+        name='salir_modo_ayuda'
+    ),
+
+    path(
+        'admin-general/salir-negocio-activo/',
+        views.salir_negocio_activo,
+        name='salir_negocio_activo'
+    ),
+
     path('admin-general/duenos/crear/', views.dueno_negocio_crear, name='dueno_negocio_crear'),
 
     path('panel/productos/', views.productos_lista, name='productos_lista'),

@@ -1,5 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User, Group
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError as DjangoValidationError
 
 from .models import (
     Pedido,
@@ -8,6 +10,25 @@ from .models import (
     Negocio,
     DuenoNegocio,
 )
+
+
+def validar_password_django(formulario, password, usuario=None, campo='password'):
+    """
+    Valida una contraseña usando los validadores configurados en settings.py.
+
+    Usa:
+    - UserAttributeSimilarityValidator
+    - MinimumLengthValidator
+    - CommonPasswordValidator
+    - NumericPasswordValidator
+    """
+    if not password:
+        return
+
+    try:
+        validate_password(password, usuario)
+    except DjangoValidationError as errores:
+        formulario.add_error(campo, errores)
 
 
 class PedidoBaseValidation:
@@ -254,6 +275,9 @@ class VendedorUsuarioForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
 
+        username = cleaned_data.get('username')
+        nombre = cleaned_data.get('nombre')
+        correo = cleaned_data.get('correo')
         password = cleaned_data.get('password')
         password_confirm = cleaned_data.get('password_confirm')
 
@@ -280,10 +304,24 @@ class VendedorUsuarioForm(forms.ModelForm):
                     'Las contraseñas no coinciden.'
                 )
 
-            if password and len(password) < 6:
-                self.add_error(
-                    'password',
-                    'La contraseña debe tener al menos 6 caracteres.'
+            if password:
+                if vendedor and vendedor.pk and vendedor.usuario:
+                    usuario_validacion = vendedor.usuario
+                    usuario_validacion.username = username or vendedor.usuario.username
+                    usuario_validacion.email = correo or ''
+                    usuario_validacion.first_name = nombre or ''
+                else:
+                    usuario_validacion = User(
+                        username=username or '',
+                        email=correo or '',
+                        first_name=nombre or '',
+                    )
+
+                validar_password_django(
+                    formulario=self,
+                    password=password,
+                    usuario=usuario_validacion,
+                    campo='password'
                 )
 
         return cleaned_data
@@ -411,6 +449,9 @@ class DuenoNegocioUsuarioForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
 
+        username = cleaned_data.get('username')
+        nombre = cleaned_data.get('nombre')
+        correo = cleaned_data.get('correo')
         password = cleaned_data.get('password')
         password_confirm = cleaned_data.get('password_confirm')
 
@@ -420,10 +461,18 @@ class DuenoNegocioUsuarioForm(forms.ModelForm):
                 'Las contraseñas no coinciden.'
             )
 
-        if password and len(password) < 6:
-            self.add_error(
-                'password',
-                'La contraseña debe tener al menos 6 caracteres.'
+        if password:
+            usuario_validacion = User(
+                username=username or '',
+                first_name=nombre or '',
+                email=correo or '',
+            )
+
+            validar_password_django(
+                formulario=self,
+                password=password,
+                usuario=usuario_validacion,
+                campo='password'
             )
 
         return cleaned_data

@@ -1,0 +1,122 @@
+/* ============================================================
+   FOODPAY - MODO AYUDA / NEGOCIO ACTIVO
+============================================================ */
+
+.inline-action-form {
+    margin: 0;
+}
+
+.inline-action-form button {
+    width: 100%;
+}
+
+.btn-help-mode {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #ffffff;
+}
+
+.btn-help-mode:hover {
+    background: linear-gradient(135deg, #1d4ed8, #1e40af);
+}
+
+.help-mode-banner {
+    margin-bottom: 22px;
+
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 24px;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.18);
+
+    padding: 18px 20px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+}
+
+.normal-business-mode {
+    background: linear-gradient(135deg, #1e293b, #334155);
+}
+
+.help-mode-info {
+    display: grid;
+    gap: 5px;
+}
+
+.help-mode-info span {
+    width: fit-content;
+
+    background: rgba(255, 255, 255, 0.12);
+    color: #dbeafe;
+
+    border-radius: 999px;
+    padding: 6px 10px;
+
+    font-size: 12px;
+    font-weight: 950;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.help-mode-info strong {
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 950;
+}
+
+.help-mode-info p {
+    margin: 0;
+
+    color: #cbd5e1;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.help-mode-banner form {
+    margin: 0;
+}
+
+.help-mode-exit {
+    min-height: 46px;
+
+    border: none;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #0f172a;
+
+    padding: 0 16px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    text-decoration: none;
+
+    font-size: 13px;
+    font-weight: 950;
+
+    cursor: pointer;
+    white-space: nowrap;
+    transition: 0.2s ease;
+}
+
+.help-mode-exit:hover {
+    background: #f8fafc;
+    transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+    .help-mode-banner {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 14px;
+
+        padding: 16px;
+        border-radius: 22px;
+    }
+
+    .help-mode-exit {
+        width: 100%;
+    }
+}

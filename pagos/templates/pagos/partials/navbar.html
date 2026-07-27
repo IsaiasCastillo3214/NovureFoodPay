@@ -1,0 +1,503 @@
+{% load static %}
+
+{% with current_url=request.resolver_match.url_name %}
+
+<!-- NAVBAR SUPERIOR DESKTOP -->
+<header class="fp-top-navbar">
+
+    <div class="fp-top-navbar-inner">
+
+        <a href="{% url 'dashboard' %}" class="fp-top-brand">
+            <span class="fp-brand-logo-wrap">
+                <img
+                    src="{% static 'pagos/img/novure_icon_black.png' %}"
+                    alt="Novure"
+                    class="fp-brand-logo"
+                >
+            </span>
+
+            <span class="fp-brand-text">
+                Novure
+            </span>
+        </a>
+
+        <nav class="fp-top-menu" aria-label="Menú principal">
+
+            {% if es_admin_general %}
+
+                <a href="{% url 'negocios_lista' %}" class="fp-top-link {% if current_url == 'negocios_lista' or current_url == 'negocio_crear' or current_url == 'negocio_editar' %}is-active{% endif %}">
+                    <span>🏢</span>
+                    Negocios
+                </a>
+
+                {% if negocio_activo %}
+
+                    <a href="{% url 'crear_pedido' %}" class="fp-top-link {% if current_url == 'crear_pedido' %}is-active{% endif %}">
+                        <span>🛒</span>
+                        Vender
+                    </a>
+
+                    <a href="{% url 'dashboard' %}" class="fp-top-link {% if current_url == 'dashboard' %}is-active{% endif %}">
+                        <span>📦</span>
+                        Pedidos
+                    </a>
+
+                    <a href="{% url 'panel_dueno' %}" class="fp-top-link {% if current_url == 'panel_dueno' %}is-active{% endif %}">
+                        <span>📊</span>
+                        Panel
+                    </a>
+
+                    <a href="{% url 'productos_lista' %}" class="fp-top-link {% if current_url == 'productos_lista' or current_url == 'producto_crear' or current_url == 'producto_editar' or current_url == 'producto_eliminar' %}is-active{% endif %}">
+                        <span>🍔</span>
+                        Productos
+                    </a>
+
+                    <a href="{% url 'vendedores_lista' %}" class="fp-top-link {% if current_url == 'vendedores_lista' or current_url == 'vendedor_crear' or current_url == 'vendedor_editar' or current_url == 'vendedor_eliminar' %}is-active{% endif %}">
+                        <span>👥</span>
+                        Vendedores
+                    </a>
+
+                {% else %}
+
+                    <a href="{% url 'dueno_negocio_crear' %}" class="fp-top-link {% if current_url == 'dueno_negocio_crear' %}is-active{% endif %}">
+                        <span>👤</span>
+                        Usuarios
+                    </a>
+
+                {% endif %}
+
+                <a href="mailto:contacto@novure.cl" class="fp-top-link">
+                    <span>💬</span>
+                    Soporte
+                </a>
+
+            {% elif es_dueno_local %}
+
+                <a href="{% url 'crear_pedido' %}" class="fp-top-link {% if current_url == 'crear_pedido' %}is-active{% endif %}">
+                    <span>🛒</span>
+                    Vender
+                </a>
+
+                <a href="{% url 'dashboard' %}" class="fp-top-link {% if current_url == 'dashboard' %}is-active{% endif %}">
+                    <span>📦</span>
+                    Pedidos
+                </a>
+
+                <a href="{% url 'panel_dueno' %}" class="fp-top-link {% if current_url == 'panel_dueno' %}is-active{% endif %}">
+                    <span>📊</span>
+                    Panel
+                </a>
+
+                <a href="{% url 'productos_lista' %}" class="fp-top-link {% if current_url == 'productos_lista' or current_url == 'producto_crear' or current_url == 'producto_editar' or current_url == 'producto_eliminar' %}is-active{% endif %}">
+                    <span>🍔</span>
+                    Productos
+                </a>
+
+                <a href="{% url 'vendedores_lista' %}" class="fp-top-link {% if current_url == 'vendedores_lista' or current_url == 'vendedor_crear' or current_url == 'vendedor_editar' or current_url == 'vendedor_eliminar' %}is-active{% endif %}">
+                    <span>👥</span>
+                    Vendedores
+                </a>
+
+            {% else %}
+
+                <a href="{% url 'crear_pedido' %}" class="fp-top-link {% if current_url == 'crear_pedido' %}is-active{% endif %}">
+                    <span>🛒</span>
+                    Vender
+                </a>
+
+                <a href="{% url 'dashboard' %}" class="fp-top-link {% if current_url == 'dashboard' %}is-active{% endif %}">
+                    <span>📦</span>
+                    Mis pedidos
+                </a>
+
+            {% endif %}
+
+        </nav>
+
+        <div class="fp-top-actions">
+
+            {% if modo_ayuda_activo and negocio_activo %}
+                <div class="fp-top-business fp-top-business-help">
+                    <span>Modo Ayuda</span>
+                    <strong>{{ negocio_activo.nombre }}</strong>
+                </div>
+            {% elif negocio_activo %}
+                <div class="fp-top-business">
+                    <span>Negocio activo</span>
+                    <strong>{{ negocio_activo.nombre }}</strong>
+                </div>
+            {% endif %}
+
+            <details class="fp-user-dropdown">
+
+                <summary>
+                    <span class="fp-user-avatar">
+                        {{ user.username|first|upper }}
+                    </span>
+
+                    <span class="fp-user-name">
+                        {{ user.username }}
+                    </span>
+
+                    <span class="fp-user-arrow">
+                        ▾
+                    </span>
+                </summary>
+
+                <div class="fp-user-dropdown-menu">
+
+                    <div class="fp-user-info">
+                        <strong>{{ user.username }}</strong>
+
+                        {% if user.email %}
+                            <span>{{ user.email }}</span>
+                        {% else %}
+                            <span>Usuario activo</span>
+                        {% endif %}
+                    </div>
+
+                    {% if es_admin_general %}
+                        <a href="{% url 'negocios_lista' %}">
+                            🏢 Panel administrador
+                        </a>
+
+                        {% if negocio_activo %}
+                            <a href="{% url 'dashboard' %}">
+                                📦 Ver pedidos
+                            </a>
+
+                            <a href="{% url 'panel_dueno' %}">
+                                📊 Panel del negocio
+                            </a>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if es_dueno_local %}
+                        <a href="{% url 'dashboard' %}">
+                            📦 Ver pedidos
+                        </a>
+
+                        <a href="{% url 'panel_dueno' %}">
+                            📊 Panel del negocio
+                        </a>
+                    {% endif %}
+
+                    {% if not es_admin_general and not es_dueno_local %}
+                        <a href="{% url 'dashboard' %}">
+                            📦 Mis pedidos
+                        </a>
+
+                        <a href="{% url 'crear_pedido' %}">
+                            🛒 Vender
+                        </a>
+                    {% endif %}
+
+                    {% if modo_ayuda_activo %}
+                        <form method="POST" action="{% url 'salir_modo_ayuda' %}">
+                            {% csrf_token %}
+                            <button type="submit">
+                                🛟 Salir de Modo Ayuda
+                            </button>
+                        </form>
+                    {% elif es_admin_general and negocio_activo %}
+                        <form method="POST" action="{% url 'salir_negocio_activo' %}">
+                            {% csrf_token %}
+                            <button type="submit">
+                                ↩ Salir del negocio
+                            </button>
+                        </form>
+                    {% endif %}
+
+                    <form method="POST" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit">
+                            ↪ Cerrar sesión
+                        </button>
+                    </form>
+
+                </div>
+
+            </details>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<!-- NAVBAR SUPERIOR MÓVIL -->
+<header class="fp-mobile-appbar">
+
+    <button type="button" class="fp-mobile-menu-btn" id="fpOpenMobileMenu">
+        ☰
+    </button>
+
+    <a href="{% url 'dashboard' %}" class="fp-mobile-title fp-mobile-title-logo">
+        <img
+            src="{% static 'pagos/img/novure_icon_black.png' %}"
+            alt="Novure"
+            class="fp-mobile-logo"
+        >
+
+        <span>
+            Novure
+        </span>
+    </a>
+
+    <button type="button" class="fp-mobile-user-btn" id="fpToggleMobileUser">
+        <span>{{ user.username|first|upper }}</span>
+    </button>
+
+    <div class="fp-mobile-dropdown" id="fpMobileDropdown">
+
+        <div class="fp-mobile-dropdown-user">
+            {% if user.email %}
+                {{ user.email }}
+            {% else %}
+                {{ user.username }}
+            {% endif %}
+        </div>
+
+        {% if es_admin_general %}
+            <a href="{% url 'negocios_lista' %}">
+                <span>🏢</span>
+                Panel administrador
+            </a>
+
+            {% if negocio_activo %}
+                <a href="{% url 'dashboard' %}">
+                    <span>📦</span>
+                    Ver pedidos
+                </a>
+
+                <a href="{% url 'panel_dueno' %}">
+                    <span>📊</span>
+                    Panel del negocio
+                </a>
+            {% endif %}
+        {% endif %}
+
+        {% if es_dueno_local %}
+            <a href="{% url 'dashboard' %}">
+                <span>📦</span>
+                Ver pedidos
+            </a>
+
+            <a href="{% url 'panel_dueno' %}">
+                <span>📊</span>
+                Panel del negocio
+            </a>
+        {% endif %}
+
+        {% if not es_admin_general and not es_dueno_local %}
+            <a href="{% url 'dashboard' %}">
+                <span>📦</span>
+                Mis pedidos
+            </a>
+
+            <a href="{% url 'crear_pedido' %}">
+                <span>🛒</span>
+                Vender
+            </a>
+        {% endif %}
+
+        {% if modo_ayuda_activo %}
+            <form method="POST" action="{% url 'salir_modo_ayuda' %}">
+                {% csrf_token %}
+                <button type="submit">
+                    <span>🛟</span>
+                    Salir de ayuda
+                </button>
+            </form>
+        {% elif es_admin_general and negocio_activo %}
+            <form method="POST" action="{% url 'salir_negocio_activo' %}">
+                {% csrf_token %}
+                <button type="submit">
+                    <span>↩</span>
+                    Salir del negocio
+                </button>
+            </form>
+        {% endif %}
+
+        <form method="POST" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit">
+                <span>↪</span>
+                Cerrar sesión
+            </button>
+        </form>
+
+    </div>
+
+</header>
+
+
+<!-- MENÚ LATERAL MÓVIL -->
+<div class="fp-mobile-overlay" id="fpMobileOverlay"></div>
+
+<aside class="fp-mobile-drawer" id="fpMobileDrawer">
+
+    <div class="fp-mobile-drawer-top">
+
+        <button type="button" class="fp-mobile-menu-btn" id="fpCloseMobileMenu">
+            ☰
+        </button>
+
+        <a href="{% url 'dashboard' %}" class="fp-mobile-title fp-mobile-title-logo">
+            <img
+                src="{% static 'pagos/img/novure_icon_black.png' %}"
+                alt="Novure"
+                class="fp-mobile-logo"
+            >
+
+            <span>
+                Novure
+            </span>
+        </a>
+
+        <button type="button" class="fp-mobile-user-btn">
+            <span>{{ user.username|first|upper }}</span>
+        </button>
+
+    </div>
+
+    <nav class="fp-mobile-drawer-nav" aria-label="Menú móvil">
+
+        {% if es_admin_general %}
+
+            <div class="fp-mobile-section-title">
+                Administración
+            </div>
+
+            <a href="{% url 'negocios_lista' %}" class="{% if current_url == 'negocios_lista' or current_url == 'negocio_crear' or current_url == 'negocio_editar' %}is-active{% endif %}">
+                <span>🏢</span>
+                <strong>Negocios</strong>
+            </a>
+
+            {% if not negocio_activo %}
+                <a href="{% url 'dueno_negocio_crear' %}" class="{% if current_url == 'dueno_negocio_crear' %}is-active{% endif %}">
+                    <span>👤</span>
+                    <strong>Usuarios</strong>
+                </a>
+            {% endif %}
+
+            {% if negocio_activo %}
+                <div class="fp-mobile-section-title">
+                    Negocio activo
+                </div>
+
+                <a href="{% url 'crear_pedido' %}" class="{% if current_url == 'crear_pedido' %}is-active{% endif %}">
+                    <span>🛒</span>
+                    <strong>Vender</strong>
+                </a>
+
+                <a href="{% url 'dashboard' %}" class="{% if current_url == 'dashboard' %}is-active{% endif %}">
+                    <span>📦</span>
+                    <strong>Pedidos</strong>
+                </a>
+
+                <a href="{% url 'panel_dueno' %}" class="{% if current_url == 'panel_dueno' %}is-active{% endif %}">
+                    <span>📊</span>
+                    <strong>Panel</strong>
+                </a>
+
+                <a href="{% url 'productos_lista' %}" class="{% if current_url == 'productos_lista' or current_url == 'producto_crear' or current_url == 'producto_editar' or current_url == 'producto_eliminar' %}is-active{% endif %}">
+                    <span>🍔</span>
+                    <strong>Productos</strong>
+                </a>
+
+                <a href="{% url 'vendedores_lista' %}" class="{% if current_url == 'vendedores_lista' or current_url == 'vendedor_crear' or current_url == 'vendedor_editar' or current_url == 'vendedor_eliminar' %}is-active{% endif %}">
+                    <span>👥</span>
+                    <strong>Vendedores</strong>
+                </a>
+            {% endif %}
+
+        {% elif es_dueno_local %}
+
+            <div class="fp-mobile-section-title">
+                Ventas
+            </div>
+
+            <a href="{% url 'crear_pedido' %}" class="{% if current_url == 'crear_pedido' %}is-active{% endif %}">
+                <span>🛒</span>
+                <strong>Vender</strong>
+            </a>
+
+            <a href="{% url 'dashboard' %}" class="{% if current_url == 'dashboard' %}is-active{% endif %}">
+                <span>📦</span>
+                <strong>Pedidos</strong>
+            </a>
+
+            <div class="fp-mobile-section-title">
+                Gestión
+            </div>
+
+            <a href="{% url 'panel_dueno' %}" class="{% if current_url == 'panel_dueno' %}is-active{% endif %}">
+                <span>📊</span>
+                <strong>Panel</strong>
+            </a>
+
+            <a href="{% url 'productos_lista' %}" class="{% if current_url == 'productos_lista' or current_url == 'producto_crear' or current_url == 'producto_editar' or current_url == 'producto_eliminar' %}is-active{% endif %}">
+                <span>🍔</span>
+                <strong>Productos</strong>
+            </a>
+
+            <a href="{% url 'vendedores_lista' %}" class="{% if current_url == 'vendedores_lista' or current_url == 'vendedor_crear' or current_url == 'vendedor_editar' or current_url == 'vendedor_eliminar' %}is-active{% endif %}">
+                <span>👥</span>
+                <strong>Vendedores</strong>
+            </a>
+
+        {% else %}
+
+            <div class="fp-mobile-section-title">
+                Ventas
+            </div>
+
+            <a href="{% url 'crear_pedido' %}" class="{% if current_url == 'crear_pedido' %}is-active{% endif %}">
+                <span>🛒</span>
+                <strong>Vender</strong>
+            </a>
+
+            <a href="{% url 'dashboard' %}" class="{% if current_url == 'dashboard' %}is-active{% endif %}">
+                <span>📦</span>
+                <strong>Mis pedidos</strong>
+            </a>
+
+        {% endif %}
+
+        <div class="fp-mobile-section-title">
+            Cuenta
+        </div>
+
+        {% if modo_ayuda_activo %}
+            <form method="POST" action="{% url 'salir_modo_ayuda' %}" class="fp-mobile-form-link">
+                {% csrf_token %}
+                <button type="submit">
+                    <span>🛟</span>
+                    <strong>Salir de ayuda</strong>
+                </button>
+            </form>
+        {% elif es_admin_general and negocio_activo %}
+            <form method="POST" action="{% url 'salir_negocio_activo' %}" class="fp-mobile-form-link">
+                {% csrf_token %}
+                <button type="submit">
+                    <span>↩</span>
+                    <strong>Salir del negocio</strong>
+                </button>
+            </form>
+        {% endif %}
+
+        <form method="POST" action="{% url 'logout' %}" class="fp-mobile-form-link">
+            {% csrf_token %}
+            <button type="submit">
+                <span>↪</span>
+                <strong>Cerrar sesión</strong>
+            </button>
+        </form>
+
+    </nav>
+
+</aside>
+
+{% endwith %}
